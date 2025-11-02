@@ -56,6 +56,13 @@ struct MainWeather: Decodable {
         case pressure, humidity
     }
 }
+//Forecast-ის სტრაქტი
+
+struct ForecastItem {
+    let dateText: String
+    let imageUrl: String
+    let temperatureText: String
+}
 
 struct Weather: Decodable {
     let id: Int
