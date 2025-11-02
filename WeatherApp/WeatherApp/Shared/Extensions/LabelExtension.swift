@@ -15,6 +15,7 @@ extension UILabel {
         color: UIColor?,
         numberOfLines: Int = 1,
         alignment: NSTextAlignment = .left,
+        alpha: CGFloat = 1
     ) -> UILabel {
         let label = UILabel()
         label.text = text
