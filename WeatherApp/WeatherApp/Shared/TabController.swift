@@ -17,9 +17,26 @@ class TabController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupTabs()
+        setupTabBarAppearance()
     }
     
+    private func setupTabBarAppearance() {
+           tabBar.tintColor = .white
+           tabBar.backgroundColor = .clear
+           tabBar.isTranslucent = true
+       }
+    
     private func setupTabs() {
+        
+        let forecastVC = ForecastViewController()
+                forecastVC.tabBarItem = UITabBarItem(
+                    title: "Forecast",
+                    image: UIImage(systemName: "cloud.sun"),
+                    tag: 0
+                )
+                
+                setViewControllers([forecastVC], animated: false)
+            }
         // აქ იქნება 5-ვე ფეიჯი, ქვედა კოდი ნიმუშისთვის
 //        let vc1 = WeatherViewController()
 //        newsVC.tabBarItem = UITabBarItem(
@@ -43,7 +60,7 @@ class TabController: UITabBarController {
     // ეს ხაზი გვექნება თუ არა გადასაწყვეტია
 //    private func setupTopLine() {
 //        tabBar.addSubview(topLineView)
-//        
+//
 //        NSLayoutConstraint.activate([
 //            topLineView.topAnchor.constraint(equalTo: tabBar.topAnchor),
 //            topLineView.leadingAnchor.constraint(equalTo: tabBar.leadingAnchor),
@@ -51,4 +68,4 @@ class TabController: UITabBarController {
 //            topLineView.heightAnchor.constraint(equalToConstant: 0.4)
 //        ])
 //    }
-}
+
