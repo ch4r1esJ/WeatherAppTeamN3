@@ -76,9 +76,8 @@ class InfoView: UIView {
     
     // MARK: - Configuration
     
-    func configure(temperature: String, precipitations: String, max: String, min: String) {
+    func configure(temperature: String, max: String, min: String) {
         temperatureLabel.text = temperature
-        precipitationsLabel.text = precipitations
         maxMinLabel.text = "Max.: \(max)° Min.: \(min)°"
     }
 }

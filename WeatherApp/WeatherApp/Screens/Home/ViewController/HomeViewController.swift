@@ -13,6 +13,7 @@ class HomeViewController: UIViewController {
     
     private let locationView = LocationView()
     private let infoView = InfoView()
+    private let homeViewModel = HomeViewModel()
         
     private let forecastList: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -57,6 +58,15 @@ class HomeViewController: UIViewController {
         setupBackgroundImage()
         setupView()
         registerCell()
+        configure()
+        homeViewModel.loadWeather(for: "Tbilisi")
+        
+        homeViewModel.onWeatherLoaded = { [weak self] _ in
+                DispatchQueue.main.async {
+                    self?.configure() // Now update UI with real data
+                    self?.forecastList.reloadData()
+                }
+            }
     }
     
     // MARK: - Methods
@@ -106,17 +116,26 @@ class HomeViewController: UIViewController {
             arrowButton.heightAnchor.constraint(equalToConstant: 44),
         ])
     }
+    
+    func configure() {
+        locationView.configure(city: homeViewModel.cityName)
+        infoView.configure(temperature: homeViewModel.temperature, max: homeViewModel.max, min: homeViewModel.min)
+    }
 }
 
 extension HomeViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
+        return homeViewModel.numberOfForecastItems()
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "HomeCell", for: indexPath) as? HomeCell else {
             return UICollectionViewCell()
         }
+        
+        let forecast = homeViewModel.forecastItem(at: indexPath.row)
+            cell.configure(temperature: forecast.temperature, icon: forecast.icon, time: forecast.time)
+        
         return cell
     }
 }

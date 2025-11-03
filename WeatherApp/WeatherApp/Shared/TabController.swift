@@ -21,51 +21,29 @@ class TabController: UITabBarController {
     }
     
     private func setupTabBarAppearance() {
-           tabBar.tintColor = .white
-           tabBar.backgroundColor = .clear
-           tabBar.isTranslucent = true
-       }
+        tabBar.tintColor = .white
+        tabBar.backgroundColor = .clear
+        tabBar.isTranslucent = true
+    }
     
     private func setupTabs() {
         
         let forecastVC = ForecastViewController()
-                forecastVC.tabBarItem = UITabBarItem(
-                    title: "Forecast",
-                    image: UIImage(systemName: "cloud.sun"),
-                    tag: 0
-                )
-                
-                setViewControllers([forecastVC], animated: false)
-            }
-        // აქ იქნება 5-ვე ფეიჯი, ქვედა კოდი ნიმუშისთვის
-//        let vc1 = WeatherViewController()
-//        newsVC.tabBarItem = UITabBarItem(
-//            title: "News",
-//            image: UIImage(systemName: "text.rectangle.page"),
-//            tag: 0
-//        )
+        forecastVC.tabBarItem = UITabBarItem(
+            title: "Forecast",
+            image: UIImage(systemName: "cloud.sun"),
+            tag: 0
+        )
         
-//        let vc2 = WeatherViewController()
-//        appVC.tabBarItem = UITabBarItem(
-//            title: "APPOTM",
-//            image: UIImage(named: "RocketImage"),
-//            tag: 1
-//        )
+        let homeVC = HomeViewController()
+        homeVC.tabBarItem = UITabBarItem(
+            title: "Home",
+            image: UIImage(systemName: "house"),
+            tag: 1
+        )
         
-//        tabBar.tintColor = .systemBlue
-//        tabBar.backgroundColor = .clear
-//        setViewControllers([vc, vc2], animated: false)
+        // აქ დაამატეთ თქვენი ფეიჯი
+        
+        setViewControllers([homeVC, forecastVC], animated: true) // აქ თანმიმდევრობის მიხედვით ჩაამატეთ თქვენი ფეიჯი
     }
-    
-    // ეს ხაზი გვექნება თუ არა გადასაწყვეტია
-//    private func setupTopLine() {
-//        tabBar.addSubview(topLineView)
-//
-//        NSLayoutConstraint.activate([
-//            topLineView.topAnchor.constraint(equalTo: tabBar.topAnchor),
-//            topLineView.leadingAnchor.constraint(equalTo: tabBar.leadingAnchor),
-//            topLineView.trailingAnchor.constraint(equalTo: tabBar.trailingAnchor),
-//            topLineView.heightAnchor.constraint(equalToConstant: 0.4)
-//        ])
-//    }
-
+}
