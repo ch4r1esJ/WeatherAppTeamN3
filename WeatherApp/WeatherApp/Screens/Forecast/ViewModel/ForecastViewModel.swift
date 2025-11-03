@@ -8,14 +8,18 @@ import Foundation
 import UIKit
 
 @MainActor
- class ForecastViewModel {
+class ForecastViewModel {
     
     private(set) var items: [ForecastItem] = [] {
         didSet { onUpdate?() }
     }
     
+    private(set) var currentCityName: String = "თბილისი" {
+            didSet { onUpdate?() }
+        }
+    
     var onUpdate: (() -> Void)?
-    //var onError: ((String) -> Void)?
+    var onError: ((String) -> Void)?
     
     // MARK: Dependencies
     
@@ -35,6 +39,34 @@ import UIKit
              self.items = mapped
          }
      }
+    func updateForecast(for cityName: String) {
+            service.loadWeatherForCity(cityName) { [weak self] response in
+                guard let self = self, let response = response else {
+                    self?.onError?("City not found")
+                    return
+                }
+                self.processResponse(response)
+            }
+        }
+        
+        func updateForecast(lat: Double, lon: Double) {
+            service.loadWeatherForcast(lat: lat, lon: lon) { [weak self] response in
+                guard let self = self else { return }
+                self.processResponse(response)
+            }
+        }
+    
+    private func processResponse(_ response: WeatherResponse) {
+            let daily = getDailyForecasts(response.list, limit: 6)
+            let mapped = daily.map { convertToForecastItem($0) }
+            DispatchQueue.main.async {
+                self.items = mapped
+            }
+        }
+        
+        func loadInitialForecast() {
+            updateForecast(lat: 43.7151, lon: 42.8271)
+        }
      
     func numberOfRows() -> Int {
         return items.count
@@ -43,36 +75,36 @@ import UIKit
     func item(at index: Int) -> ForecastItem {
         return items[index]
     }
+    
+    // MARK: UI Convenience (for ViewController)
+    
+    func backgroundImage() -> UIImage? {
+        let defaultImage = UIImage(named: BackgroundType.sunnyDefault.assetName)
         
-        // MARK: UI Convenience (for ViewController)
+        guard let firstEntry = items.first,
+              let currentTemp = getTemperatureValue(from: firstEntry.temperatureText) else {
+            return defaultImage
+        }
+        if currentTemp <= 10.0 {
+            return UIImage(named: BackgroundType.coldWeather.assetName)
+        } else {
+            return defaultImage
+        }
+    }
+    
+    func weatherIconImage() -> UIImage? {
+        guard let firstEntry = items.first else { return UIImage(named: "defaultIcon") }
+        let currentTemp = getTemperatureValue(from: firstEntry.temperatureText) ?? 20
+        let isCold = currentTemp <= 10.0
+        let iconName = WeatherIconManager.iconName(for: firstEntry.iconCode, isCold: isCold)
         
-     func backgroundImage() -> UIImage? {
-         let defaultImage = UIImage(named: BackgroundType.sunnyDefault.assetName)
-         
-         guard let firstEntry = items.first,
-               let currentTemp = getTemperatureValue(from: firstEntry.temperatureText) else {
-             return defaultImage
-         }
-         if currentTemp <= 10.0 {
-             return UIImage(named: BackgroundType.coldWeather.assetName)
-         } else {
-             return defaultImage
-         }
-     }
+        print("WEATHER ICON: code=\(firstEntry.iconCode), temp=\(currentTemp)°C, isCold=\(isCold) → \(iconName)")
         
-     func weatherIconImage() -> UIImage? {
-         guard let firstEntry = items.first else { return UIImage(named: "defaultIcon") }
-         let currentTemp = getTemperatureValue(from: firstEntry.temperatureText) ?? 20
-         let isCold = currentTemp <= 10.0
-         let iconName = WeatherIconManager.iconName(for: firstEntry.iconCode, isCold: isCold)
-         
-         print("WEATHER ICON: code=\(firstEntry.iconCode), temp=\(currentTemp)°C, isCold=\(isCold) → \(iconName)")
-         
-         return UIImage(named: iconName)
-     }
-        
-        // MARK: Mapping / Transform
-        
+        return UIImage(named: iconName)
+    }
+    
+    // MARK: Mapping / Transform
+    
     private func convertToForecastItem(_ entry: WeatherItem) -> ForecastItem {
         let dayText = formatDate(entry.dtTxt)
         

@@ -1,0 +1,78 @@
+//
+//  TopView.swift
+//  WeatherApp
+//
+//  Created by Atinati on 03.11.25.
+//
+import UIKit
+ 
+class CityView: UIView {
+    
+    // MARK: Properties
+    
+    private let hStack = UIStackView.make(axis: .horizontal, distribution: .fill, alignment: .center)
+    
+    private let locationPin: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.image = UIImage(named: "locationPin")
+        imageView.tintColor = .white
+        return imageView
+    }()
+    
+    private let cityName = UILabel.make(text: "Tbilisi", fontSize: 17, weight: .bold, color: .white)
+    
+    private let weatherImage: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.image = UIImage(named: "thunderstormIcon")
+        return imageView
+    }()
+    
+    // MARK: Init
+    
+    init() {
+        super.init(frame: .zero)
+        setupView()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: Setup
+    
+    private func setupView() {
+        backgroundColor = .clear
+        
+        addSubview(hStack)
+        addSubview(weatherImage)
+        
+        [locationPin, cityName].forEach { hStack.addArrangedSubview($0) }
+        hStack.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            hStack.topAnchor.constraint(equalTo: topAnchor, constant: 16),
+            hStack.leadingAnchor.constraint(equalTo: leadingAnchor),
+            hStack.trailingAnchor.constraint(equalTo: trailingAnchor),
+            locationPin.widthAnchor.constraint(equalToConstant: 20),
+            locationPin.heightAnchor.constraint(equalToConstant: 20),
+            
+            weatherImage.topAnchor.constraint(equalTo: hStack.bottomAnchor, constant: 16),
+            weatherImage.centerXAnchor.constraint(equalTo: centerXAnchor),
+            weatherImage.widthAnchor.constraint(equalToConstant: 200),
+            weatherImage.heightAnchor.constraint(equalToConstant: 200),
+            weatherImage.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16)
+        ])
+    }
+    
+    // MARK: Configuration
+    
+    func configure(city: String, weatherIcon: UIImage?) {
+            cityName.text = city
+            weatherImage.image = weatherIcon
+        }
+}
+ 
+
