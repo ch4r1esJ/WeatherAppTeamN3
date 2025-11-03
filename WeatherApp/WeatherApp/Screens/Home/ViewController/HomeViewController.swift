@@ -13,6 +13,21 @@ class HomeViewController: UIViewController {
     
     private let locationView = LocationView()
     private let infoView = InfoView()
+        
+    private let forecastList: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.minimumLineSpacing = 12
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        layout.itemSize = CGSize(width: 70, height: 130)
+
+        let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        view.backgroundColor = UIColor.systemCyan.withAlphaComponent(0.3)
+        view.layer.cornerRadius = 20
+        view.showsHorizontalScrollIndicator = false
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
     
     private let backgroundImage: UIImageView = {
         let imageView = UIImageView()
@@ -27,6 +42,7 @@ class HomeViewController: UIViewController {
         super.viewDidLoad()
         setupBackgroundImage()
         setupView()
+        registerCell()
     }
     
     // MARK: - Methods
@@ -36,11 +52,19 @@ class HomeViewController: UIViewController {
         backgroundImage.frame = view.bounds
     }
     
+    private func registerCell() {
+        forecastList.register(HomeCell.self, forCellWithReuseIdentifier: "HomeCell")
+        forecastList.dataSource = self
+        forecastList.delegate = self
+    }
+    
     private func setupView() {
         view.addSubview(locationView)
         view.addSubview(infoView)
+        view.addSubview(forecastList)
+
         
-        [locationView, infoView].forEach {
+        [locationView, infoView, forecastList].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         
@@ -51,8 +75,30 @@ class HomeViewController: UIViewController {
             
             infoView.topAnchor.constraint(equalTo: locationView.bottomAnchor),
             infoView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            infoView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
+            infoView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+
+            forecastList.leadingAnchor.constraint(equalTo: infoView.leadingAnchor),
+            forecastList.trailingAnchor.constraint(equalTo: infoView.trailingAnchor),
+            forecastList.topAnchor.constraint(equalTo: infoView.bottomAnchor, constant: 60),
+            forecastList.heightAnchor.constraint(equalToConstant: 150),
         ])
     }
 }
 
+extension HomeViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return 10
+    }
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "HomeCell", for: indexPath) as? HomeCell else {
+            return UICollectionViewCell()
+        }
+        return cell
+    }
+}
+
+extension HomeViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    }
+}
