@@ -15,7 +15,7 @@ import UIKit
     }
     
     var onUpdate: (() -> Void)?
-    var onError: ((String) -> Void)?
+    //var onError: ((String) -> Void)?
     
     // MARK: Dependencies
     
@@ -46,39 +46,30 @@ import UIKit
         
         // MARK: UI Convenience (for ViewController)
         
-    func backgroundImage() -> UIImage? {
-        guard let firstEntry = items.first else {
-            return UIImage(named: BackgroundType.sunnyDefault.assetName)
-        }
+     func backgroundImage() -> UIImage? {
+         let defaultImage = UIImage(named: BackgroundType.sunnyDefault.assetName)
+         
+         guard let firstEntry = items.first,
+               let currentTemp = getTemperatureValue(from: firstEntry.temperatureText) else {
+             return defaultImage
+         }
+         if currentTemp <= 10.0 {
+             return UIImage(named: BackgroundType.coldWeather.assetName)
+         } else {
+             return defaultImage
+         }
+     }
         
-        let tempText = firstEntry.temperatureText
-        guard let currentTemp = getTemperatureValue(from: tempText) else {
-            return UIImage(named: BackgroundType.sunnyDefault.assetName)
-        }
-        
-        let isTooCold = currentTemp <= 10.0
-        
-        if isTooCold {
-            return UIImage(named: BackgroundType.coldWeather.assetName)
-        } else {
-            return UIImage(named: BackgroundType.sunnyDefault.assetName)
-        }
-    }
-        
-    func weatherIconImage() -> UIImage? {
-        guard let firstEntry = items.first else {
-            return UIImage(named: "defaultIcon")
-        }
-        
-        let urlString = firstEntry.imageUrl
-        let iconPrefix = urlString
-            .split(separator: "/")
-            .last?
-            .prefix(2)
-            .description ?? ""
-        let iconName = WeatherIconManager.iconName(for: iconPrefix)
-        return UIImage(named: iconName)
-    }
+     func weatherIconImage() -> UIImage? {
+         guard let firstEntry = items.first else { return UIImage(named: "defaultIcon") }
+         let currentTemp = getTemperatureValue(from: firstEntry.temperatureText) ?? 20
+         let isCold = currentTemp <= 10.0
+         let iconName = WeatherIconManager.iconName(for: firstEntry.iconCode, isCold: isCold)
+         
+         print("WEATHER ICON: code=\(firstEntry.iconCode), temp=\(currentTemp)°C, isCold=\(isCold) → \(iconName)")
+         
+         return UIImage(named: iconName)
+     }
         
         // MARK: Mapping / Transform
         
@@ -94,7 +85,8 @@ import UIKit
         return ForecastItem(
             dateText: dayText,
             imageUrl: iconURL,
-            temperatureText: tempText
+            temperatureText: tempText,
+            iconCode: String(iconCode.prefix(2))
         )
     }
         
