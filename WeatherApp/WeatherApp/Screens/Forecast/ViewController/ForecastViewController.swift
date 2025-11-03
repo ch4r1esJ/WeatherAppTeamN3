@@ -9,6 +9,7 @@ import UIKit
 class ForecastViewController: UIViewController {
     
     // MARK: UI
+    
     private let cityView = CityView()
     
     private let weatherImageView: UIImageView = {
@@ -53,7 +54,6 @@ class ForecastViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .clear
-        viewModel.loadInitialForecast()
         setupUI()
         setupViewModelCallbacks()
         viewModel.loadForecast()
@@ -69,7 +69,6 @@ class ForecastViewController: UIViewController {
     private func setupUI() {
         setupTableView()
         addSubviews()
-        applyInitialAppearance()
         setupLayoutConstraints()
     }
     
@@ -82,21 +81,13 @@ class ForecastViewController: UIViewController {
     private func addSubviews() {
         view.addSubview(backgroundImageView)
         view.addSubview(cityView)
-       // view.addSubview(weatherImageView)
         view.addSubview(forecastTitleLabel)
         view.addSubview(tableView)
     }
     
-    private func applyInitialAppearance() {
-        backgroundImageView.image = viewModel.backgroundImage()
-        weatherImageView.image = viewModel.weatherIconImage()
-        cityView.configure(city: viewModel.currentCityName,
-        weatherIcon: viewModel.weatherIconImage())
-    }
-    
     private func layoutTableAndHeaderFrame() {
-        let tableHeight: CGFloat = 5 * 80
-        let tableY = view.bounds.midY - (tableHeight / 2) + 130
+        let tableHeight: CGFloat = 6 * 80
+        let tableY = view.bounds.midY - (tableHeight / 2) + 120
         tableView.frame = CGRect(
             x: 16,
             y: tableY,

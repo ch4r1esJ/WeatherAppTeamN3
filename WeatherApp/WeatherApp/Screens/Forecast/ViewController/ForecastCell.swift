@@ -134,6 +134,3 @@ import Foundation
     }
 }
 
-#Preview {
-    ForecastViewController()
-}
