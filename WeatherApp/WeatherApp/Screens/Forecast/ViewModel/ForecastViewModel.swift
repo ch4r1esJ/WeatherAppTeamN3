@@ -103,7 +103,7 @@ class ForecastViewModel {
     }
     
     private func processResponse(_ response: WeatherResponse) {
-        let daily = getDailyForecasts(response.list, limit: 6)
+        let daily = getDailyForecasts(response.list, limit: 5)
         let mapped = daily.map { convertToForecastItem($0) }
         self.items = mapped
     }
