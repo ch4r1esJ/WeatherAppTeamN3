@@ -24,8 +24,8 @@ import UIKit
     // MARK: Public API
     
      func loadForecast(
-         lat: Double = 41.7151,
-         lon: Double = 44.8271
+         lat: Double = 21.7151,
+         lon: Double = 24.8271
      ) {
          service.loadWeatherForcast(lat: lat, lon: lon) { [weak self] weatherResponse in
              guard let self else { return }

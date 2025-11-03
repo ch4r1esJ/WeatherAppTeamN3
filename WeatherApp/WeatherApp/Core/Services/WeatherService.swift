@@ -35,7 +35,7 @@ class WeatherService {
     }
     
     func loadWeatherForcast(lat: Double, lon: Double, completion: @escaping (WeatherResponse) -> ()) {
-            let url = "https://api.openweathermap.org/data/2.5/forecast?lat=\(lat)&lon=\(lon)&appid=eda9b39a8f8b30c8f5eddbf6f47013f0"
+            let url = "https://api.openweathermap.org/data/2.5/forecast?lat=\(lat)&lon=\(lon)&appid=eda9b39a8f8b30c8f5eddbf6f47013f0&units=metric"
             
             networkManager.getData(url: url) { (result: Result<WeatherResponse, Error>) in
                 switch result {
