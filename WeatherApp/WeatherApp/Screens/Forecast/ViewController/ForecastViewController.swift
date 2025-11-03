@@ -10,6 +10,8 @@ class ForecastViewController: UIViewController {
     
     // MARK: UI
     
+    private let cityView = CityView()
+    
     private let weatherImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -26,9 +28,9 @@ class ForecastViewController: UIViewController {
     }()
     
     private let forecastTitleLabel: UILabel = UILabel.make(
-        text: "6 - DAY FORECAST",
-        fontSize: 12,
-        weight: .semibold,
+        text: " 🗓️ 6 - DAY FORECAST",
+        fontSize: 20,
+        weight: .medium,
         color: .white,
         alignment: .left,
         alpha: 0.9,
@@ -67,7 +69,6 @@ class ForecastViewController: UIViewController {
     private func setupUI() {
         setupTableView()
         addSubviews()
-        applyInitialAppearance()
         setupLayoutConstraints()
     }
     
@@ -79,19 +80,14 @@ class ForecastViewController: UIViewController {
     
     private func addSubviews() {
         view.addSubview(backgroundImageView)
-        view.addSubview(weatherImageView)
+        view.addSubview(cityView)
         view.addSubview(forecastTitleLabel)
         view.addSubview(tableView)
     }
     
-    private func applyInitialAppearance() {
-        backgroundImageView.image = viewModel.backgroundImage()
-        weatherImageView.image = viewModel.weatherIconImage()
-    }
-    
     private func layoutTableAndHeaderFrame() {
-        let tableHeight: CGFloat = 5 * 80
-        let tableY = view.bounds.midY - (tableHeight / 2) + 80
+        let tableHeight: CGFloat = 6 * 80
+        let tableY = view.bounds.midY - (tableHeight / 2) + 120
         tableView.frame = CGRect(
             x: 16,
             y: tableY,
@@ -107,18 +103,18 @@ class ForecastViewController: UIViewController {
     }
 
     private func setupLayoutConstraints() {
+        cityView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             backgroundImageView.topAnchor.constraint(equalTo: view.topAnchor),
             backgroundImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             backgroundImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             backgroundImageView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            
-            weatherImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
-            weatherImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            weatherImageView.heightAnchor.constraint(equalToConstant: 140),
-            weatherImageView.widthAnchor.constraint(equalToConstant: 140),
+            cityView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+            cityView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            cityView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
         ])
     }
+    
     
     // MARK: ViewModel Binding
     
@@ -133,6 +129,8 @@ class ForecastViewController: UIViewController {
             self.tableView.reloadData()
             self.backgroundImageView.image = self.viewModel.backgroundImage()
             self.weatherImageView.image = self.viewModel.weatherIconImage()
+            self.cityView.configure(city: self.viewModel.currentCityName,
+            weatherIcon: self.viewModel.weatherIconImage())
         }
     }
 }
@@ -173,4 +171,6 @@ extension ForecastViewController: UITableViewDataSource, UITableViewDelegate {
     }
 }
 
-
+#Preview {
+    ForecastViewController()
+}

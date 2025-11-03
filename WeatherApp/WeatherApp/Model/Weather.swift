@@ -62,6 +62,7 @@ struct ForecastItem {
     let dateText: String
     let imageUrl: String
     let temperatureText: String
+    let iconCode: String
 }
 
 struct Weather: Decodable {
