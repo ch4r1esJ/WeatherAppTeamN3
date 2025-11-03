@@ -70,9 +70,8 @@ class LocationView: UIView {
     
     // MARK: - Configuration
     
-    func configure(city: String, weatherIcon: UIImage?) {
+    func configure(city: String) {
         cityName.text = city
-        weatherImage.image = weatherIcon
     }
 }
 
