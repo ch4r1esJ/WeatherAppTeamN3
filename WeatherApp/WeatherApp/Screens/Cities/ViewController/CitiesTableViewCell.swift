@@ -8,7 +8,9 @@
 import UIKit
 
 class CitiesTableViewCell: UITableViewCell {
+    
     // MARK: Properties
+    
     private let containerForCell: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -25,9 +27,9 @@ class CitiesTableViewCell: UITableViewCell {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
-        label.font = UIFont.systemFont(ofSize: 25, weight: .medium)
+        label.font = UIFont.systemFont(ofSize: 45, weight: .semibold)
         label.textAlignment = .center
-        
+        label.textColor = .white
         label.text = "20º"
         
         return label
@@ -37,14 +39,15 @@ class CitiesTableViewCell: UITableViewCell {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
-        label.font = UIFont.systemFont(ofSize: 40, weight: .semibold)
-        
+        label.font = UIFont.systemFont(ofSize: 35, weight: .medium)
+        label.textColor = .white
         label.text = "Tbilisi"
         
         return label
     }()
     
     // MARK: Life Cycles
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         contentView.backgroundColor = .clear
@@ -65,6 +68,7 @@ class CitiesTableViewCell: UITableViewCell {
     }
     
     // MARK: Methods
+    
     private func setupConstraints() {
         NSLayoutConstraint.activate([
             // containerForCell
@@ -74,12 +78,12 @@ class CitiesTableViewCell: UITableViewCell {
             containerForCell.trailingAnchor.constraint(equalTo: trailingAnchor, constant:  -15),
             
             // cityLabel
-            cityLabel.leadingAnchor.constraint(equalTo: containerForCell.leadingAnchor, constant: 10),
+            cityLabel.leadingAnchor.constraint(equalTo: containerForCell.leadingAnchor, constant: 15),
             cityLabel.centerYAnchor.constraint(equalTo: containerForCell.centerYAnchor),
             cityLabel.widthAnchor.constraint(equalTo: containerForCell.widthAnchor, multiplier: 3/5),
             
             // temperatureLabel
-            temperatureLabel.trailingAnchor.constraint(equalTo: containerForCell.trailingAnchor, constant: -10),
+            temperatureLabel.trailingAnchor.constraint(equalTo: containerForCell.trailingAnchor, constant: -15),
             temperatureLabel.centerYAnchor.constraint(equalTo: containerForCell.centerYAnchor),
             temperatureLabel.widthAnchor.constraint(equalTo: containerForCell.widthAnchor, multiplier: 1/5)
         ])
@@ -90,8 +94,8 @@ class CitiesTableViewCell: UITableViewCell {
             self.selectionStyle = .none
             contentView.backgroundColor = .clear
             
-            layer.shadowColor = UIColor(red: 0/255, green: 16/255, blue: 38/255, alpha: 1).cgColor
-            layer.shadowOpacity = 0.99
+        layer.shadowColor = UIColor(red: 0/255, green: 16/255, blue: 38/255, alpha: 1).cgColor
+            layer.shadowOpacity = 0.9
             layer.shadowOffset = CGSize(width: 0, height: 4)
             layer.shadowRadius = 16
             layer.masksToBounds = false

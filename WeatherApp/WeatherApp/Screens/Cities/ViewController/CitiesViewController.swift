@@ -9,10 +9,14 @@ import UIKit
 
 class CitiesViewController: UIViewController {
     
+    // MARK: Properties
+    
     private let backgroundImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFill
+        imageView.image = .defaultBackground
+
         return imageView
     }()
     
@@ -67,19 +71,21 @@ class CitiesViewController: UIViewController {
         return tableView
     }()
     
+    // MARK: Life Cycles
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .systemBlue
+        view.backgroundColor = .red
         
         setupUI()
     }
     
+    // MARK: Methods
     private func setupUI() {
         view.addSubview(backgroundImageView)
         view.addSubview(searchTextField)
         view.addSubview(addButton)
         view.addSubview(citiesTableView)
-        
         
         configureTableView()
         setupConstraints()
@@ -87,25 +93,21 @@ class CitiesViewController: UIViewController {
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            // backgroundImageView
             backgroundImageView.topAnchor.constraint(equalTo: view.topAnchor),
             backgroundImageView.leftAnchor.constraint(equalTo: view.leftAnchor),
             backgroundImageView.rightAnchor.constraint(equalTo: view.rightAnchor),
             backgroundImageView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            
-            // searchTextField
+
             searchTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             searchTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: ScreenSize.width * (20 / 402)),
             searchTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: ScreenSize.width * (-20 / 402)),
             searchTextField.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 25 / 402),
-            
-            // addButton
+
             addButton.topAnchor.constraint(equalTo: searchTextField.bottomAnchor, constant: ScreenSize.height * (10 / 874)),
             addButton.trailingAnchor.constraint(equalTo: searchTextField.trailingAnchor, constant: 0),
             addButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 100 / 404),
             addButton.heightAnchor.constraint(equalTo: view.widthAnchor, multiplier: 35 / 404),
             
-            // citiesTableView
             citiesTableView.topAnchor.constraint(equalTo: addButton.bottomAnchor, constant: ScreenSize.height * (10 / 874)),
             citiesTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0 /*ScreenSize.width * (20 / 402)*/),
             citiesTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0/*ScreenSize.width * (-20 / 402)*/),
@@ -119,9 +121,8 @@ class CitiesViewController: UIViewController {
         
         citiesTableView.register(CitiesTableViewCell.self, forCellReuseIdentifier: "FavouritesTableViewCell")
     }
-
 }
-
+ // TODO: შესაცლელია
 extension CitiesViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         30
@@ -132,8 +133,6 @@ extension CitiesViewController: UITableViewDataSource, UITableViewDelegate {
         
         return cell
     }
-    
-    
 }
 
 #Preview {
