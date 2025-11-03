@@ -18,7 +18,7 @@ class WeatherService {
     }
     
     func getCoordinates(for cityName: String, completion: @escaping (Double, Double) -> ()) {
-        let url = "https://api.openweathermap.org/data/2.5/weather?q=\(cityName)&appid=390b1c9d792d64568df3ea91ce636c59"
+        let url = "https://api.openweathermap.org/data/2.5/weather?q=\(cityName)&appid=390b1c9d792d64568df3ea91ce636c59&units=metric"
         
         networkManager.getData(url: url) { (result: Result<CurrentWeatherResponse, Error>) in
             
