@@ -10,7 +10,6 @@ import UIKit
 class CitiesTableViewCell: UITableViewCell {
     
     // MARK: Properties
-    
     private let containerForCell: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false

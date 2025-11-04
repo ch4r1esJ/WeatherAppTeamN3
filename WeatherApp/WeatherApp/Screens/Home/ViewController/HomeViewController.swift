@@ -164,11 +164,18 @@ class HomeViewController: UIViewController {
     }
     
     private func setupActions() {
-        detailsButton.addTarget(self, action: #selector(detailsButtonTapped), for: .touchUpInside)
+        detailsButton.addAction(UIAction { [weak self] _ in
+            guard let self = self,
+                  let coord = self.homeViewModel.weatherResponse?.city.coord else { return }
+            let detailsVC = DetailsViewController()
+            detailsVC.lat = coord.lat
+            detailsVC.lon = coord.lon
+            self.present(detailsVC, animated: true)
+        }, for: .touchUpInside)
     }
     
-    @objc private func detailsButtonTapped() {
-    }
+//    @objc private func detailsButtonTapped() {
+//    }
     
     func configure() {
         locationView.configure(city: homeViewModel.cityName, image: homeViewModel.weatherIconImage(), )
@@ -203,3 +210,4 @@ extension HomeViewController: UICollectionViewDelegate {
         homeViewModel.loadWeather(lat: lat, lon: lon)
     }
 }
+

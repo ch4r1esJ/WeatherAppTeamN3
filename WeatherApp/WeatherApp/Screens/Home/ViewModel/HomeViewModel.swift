@@ -1,13 +1,12 @@
-//
 //  HomeViewModel.swift
 //  WeatherApp
 //
 //  Created by Charles Janjgava on 11/3/25.
 //
-
+ 
 import Foundation
 import UIKit
-
+ 
 class HomeViewModel {
     private let weatherService: WeatherService
     private(set) var weatherResponse: WeatherResponse?

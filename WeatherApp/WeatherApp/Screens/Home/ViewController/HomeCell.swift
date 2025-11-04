@@ -4,9 +4,9 @@
 //
 //  Created by Charles Janjgava on 11/3/25.
 //
-
+ 
 import UIKit
-
+ 
 class HomeCell: UICollectionViewCell {
     // MARK: - Properties
     

@@ -5,7 +5,6 @@
 //  Created by Charles Janjgava on 11/2/25.
 //
 
-// es axla davamate
 struct WeatherInfo: Codable {
     let coord: Coordinate
     let main: MainWeather
@@ -20,7 +19,6 @@ struct WeatherInfo: Codable {
         let temp: Double
     }
 }
-//
 
 struct CurrentWeatherResponse: Decodable {
     let coord: Coordinates
@@ -116,5 +114,6 @@ struct Rain: Decodable {
 struct City: Decodable {
     let id: Int
     let name: String
+    let coord: Coordinates
     let country: String
 }

@@ -5,7 +5,7 @@
 //  Created by Atinati on 02.11.25.
 //
 import UIKit
-
+ 
 class ForecastViewController: UIViewController {
     
     // MARK: UI
@@ -28,7 +28,7 @@ class ForecastViewController: UIViewController {
     }()
     
     private let forecastTitleLabel: UILabel = UILabel.make(
-        text: " 🗓️ 6 - DAY FORECAST",
+        text: " 6 - DAY FORECAST",
         fontSize: 20,
         weight: .medium,
         color: .white,
@@ -87,7 +87,7 @@ class ForecastViewController: UIViewController {
     
     private func layoutTableAndHeaderFrame() {
         let tableHeight: CGFloat = 6 * 80
-        let tableY = view.bounds.midY - (tableHeight / 2) + 120
+        let tableY = view.bounds.midY - (tableHeight / 2) + 170
         tableView.frame = CGRect(
             x: 16,
             y: tableY,
@@ -101,7 +101,7 @@ class ForecastViewController: UIViewController {
             height: 20
         )
     }
-
+ 
     private func setupLayoutConstraints() {
         cityView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -129,18 +129,19 @@ class ForecastViewController: UIViewController {
             self.tableView.reloadData()
             self.backgroundImageView.image = self.viewModel.backgroundImage()
             self.weatherImageView.image = self.viewModel.weatherIconImage()
-            self.cityView.configure(city: self.viewModel.currentCityName,
+            self.cityView.configure(city: self.viewModel.cityName,
             weatherIcon: self.viewModel.weatherIconImage())
         }
     }
     // MARK: დავამატე ლოკაციით ინფოს ჩამოტვირტვა
+    
     func loadWeather(lat: Double, lon: Double) {
            viewModel.loadForecast(lat: lat, lon: lon)
        }
 }
-
+ 
 // MARK: UITableViewDataSource / UITableViewDelegate
-
+ 
 extension ForecastViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView,
@@ -174,7 +175,7 @@ extension ForecastViewController: UITableViewDataSource, UITableViewDelegate {
         return 80
     }
 }
-
+ 
 #Preview {
     ForecastViewController()
 }

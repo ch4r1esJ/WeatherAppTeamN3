@@ -6,7 +6,7 @@
 //
 import Foundation
 import UIKit
-
+ 
 @MainActor
 class ForecastViewModel {
     
@@ -14,9 +14,15 @@ class ForecastViewModel {
         didSet { onUpdate?() }
     }
     
-    private(set) var currentCityName: String = "თბილისი" {
+    private(set) var currentCityName: String = "" {
         didSet { onUpdate?() }
     }
+    var cityName: String {
+        let raw = weatherResponse?.city.name ?? "Unknown"
+        return raw.components(separatedBy: ",").last?.trimmingCharacters(in: .whitespacesAndNewlines) ?? raw
+    }
+    
+    private(set) var weatherResponse: WeatherResponse?
     
     var onUpdate: (() -> Void)?
     var onError: ((String) -> Void)?
@@ -24,12 +30,23 @@ class ForecastViewModel {
     // MARK: Dependencies
     
     private let service = WeatherService()
+    private let inputFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        return dateFormatter
+    }()
+    
+    private let outputFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "E"
+        return dateFormatter
+    }()
     
     // MARK: Public API
     
     func loadForecast(
-        lat: Double = 43.7151,
-        lon: Double = 42.8271
+        lat: Double = 41.7151,
+        lon: Double = 44.8271
     ) {
         service.loadWeatherForcast(lat: lat, lon: lon) { [weak self] weatherResponse in
             guard let self else { return }
@@ -43,21 +60,10 @@ class ForecastViewModel {
                 self?.onError?("City not found")
                 return
             }
-            self.currentCityName = cityName
             self.processResponse(response)
         }
     }
-    
-    func numberOfRows() -> Int {
-        return items.count
-    }
-    
-    func item(at index: Int) -> ForecastItem {
-        return items[index]
-    }
-    
-    // MARK: UI for ViewController
-    
+ 
     func backgroundImage() -> UIImage? {
         let defaultImage = UIImage(named: BackgroundType.sunnyDefault.assetName)
         
@@ -83,7 +89,7 @@ class ForecastViewModel {
         return UIImage(named: iconName)
     }
     
-    // MARK: Mapping / Transform
+    // MARK: Transform
     
     private func convertToForecastItem(_ entry: WeatherItem) -> ForecastItem {
         let dayText = formatDate(entry.dtTxt)
@@ -103,6 +109,12 @@ class ForecastViewModel {
     }
     
     private func processResponse(_ response: WeatherResponse) {
+        self.weatherResponse = response
+ 
+        let rawName = response.city.name
+        let parts = rawName.split(separator: ",")
+        let cleaned = parts.last?.trimmingCharacters(in: .whitespacesAndNewlines) ?? rawName
+        self.currentCityName = cleaned
         let daily = getDailyForecasts(response.list, limit: 5)
         let mapped = daily.map { convertToForecastItem($0) }
         self.items = mapped
@@ -131,20 +143,6 @@ class ForecastViewModel {
         return Double(cleanedString)
     }
     
-    // MARK: Date formatting
-    
-    private let inputFormatter: DateFormatter = {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        return dateFormatter
-    }()
-    
-    private let outputFormatter: DateFormatter = {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "E"
-        return dateFormatter
-    }()
-    
     private func formatDate(_ dateText: String) -> String {
         guard let date = inputFormatter.date(from: dateText) else {
             return dateText
@@ -156,5 +154,14 @@ class ForecastViewModel {
         
         return outputFormatter.string(from: date)
     }
+    
+    func numberOfRows() -> Int {
+        return items.count
+    }
+    
+    func item(at index: Int) -> ForecastItem {
+        return items[index]
+    }
 }
-
+ 
+ 
