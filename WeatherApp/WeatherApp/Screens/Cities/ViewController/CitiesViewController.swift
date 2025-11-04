@@ -42,7 +42,7 @@ class CitiesViewController: UIViewController {
         textField.leftViewMode = .always
         
         let rightPadding = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: 0))
-        textField.rightView = leftPadding
+        textField.rightView = rightPadding
         textField.rightViewMode = .always
         
         textField.backgroundColor = .init(white: 0, alpha: 0.3)
@@ -124,7 +124,7 @@ class CitiesViewController: UIViewController {
         citiesTableView.dataSource = self
         citiesTableView.delegate = self
         
-        citiesTableView.register(CitiesTableViewCell.self, forCellReuseIdentifier: "FavouritesTableViewCell")
+        citiesTableView.register(CitiesTableViewCell.self, forCellReuseIdentifier: "CitiesTableViewCell")
     }
     
     private func bindViewModel() {
@@ -163,7 +163,7 @@ extension CitiesViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "FavouritesTableViewCell", for: indexPath) as? CitiesTableViewCell,
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "CitiesTableViewCell", for: indexPath) as? CitiesTableViewCell,
               let city = viewModel.getCity(at: indexPath.row) else {
             return UITableViewCell()
         }
