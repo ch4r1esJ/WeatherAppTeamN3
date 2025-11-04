@@ -8,13 +8,12 @@
 import UIKit
 
 class InfoView: UIView {
-    
     // MARK: - Properties
     
     private let temperatureLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: 80, weight: .bold    )
+        label.font = UIFont.systemFont(ofSize: 80, weight: .bold)
         label.textColor = .white
         label.textAlignment = .center
         label.text = "24ºC"
@@ -41,7 +40,7 @@ class InfoView: UIView {
         return label
     }()
     
-    // MARK: - Init
+    // MARK: Init
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -52,11 +51,10 @@ class InfoView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - Setup
+    // MARK: Setup
     
     private func setupUI() {
         backgroundColor = .clear
-        
         addSubview(temperatureLabel)
         addSubview(precipitationsLabel)
         addSubview(maxMinLabel)
@@ -73,7 +71,7 @@ class InfoView: UIView {
             maxMinLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16)
         ])
     }
-        
+    
     func configure(temperature: String, max: String, min: String) {
         temperatureLabel.text = temperature
         maxMinLabel.text = "Max.: \(max)º Min.: \(min)º"

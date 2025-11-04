@@ -71,7 +71,6 @@ struct MainWeather: Decodable {
         case pressure, humidity
     }
 }
-//Forecast-ის სტრაქტი
 
 struct ForecastItem {
     let dateText: String
@@ -79,7 +78,6 @@ struct ForecastItem {
     let temperatureText: String
     let iconCode: String
 }
-// details-ზე cell-ების ინფოს struct
 
 struct WeatherDetail {
     let title: String
@@ -117,3 +115,11 @@ struct City: Decodable {
     let coord: Coordinates
     let country: String
 }
+
+struct WeatherFirstInfo {
+    let name: String
+    let temp: Double
+    let lat: Double
+    let lon: Double
+}
+

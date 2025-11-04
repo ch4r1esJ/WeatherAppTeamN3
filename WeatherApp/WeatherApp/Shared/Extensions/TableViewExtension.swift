@@ -4,6 +4,7 @@
 //
 //  Created by Atinati on 02.11.25.
 //
+
 import UIKit
 
 extension UITableView {

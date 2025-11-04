@@ -4,8 +4,9 @@
 //
 //  Created by Atinati on 02.11.25.
 //
+
 import UIKit
- 
+
 class ForecastViewController: UIViewController {
     
     // MARK: UI
@@ -49,7 +50,7 @@ class ForecastViewController: UIViewController {
     
     private let viewModel = ForecastViewModel()
     
-    // MARK: Lifecycle
+    // MARK: Life Cycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -64,7 +65,7 @@ class ForecastViewController: UIViewController {
         layoutTableAndHeaderFrame()
     }
     
-    // MARK: Setup
+    // MARK: Methods
     
     private func setupUI() {
         setupTableView()
@@ -101,7 +102,7 @@ class ForecastViewController: UIViewController {
             height: 20
         )
     }
- 
+    
     private func setupLayoutConstraints() {
         cityView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -115,9 +116,6 @@ class ForecastViewController: UIViewController {
         ])
     }
     
-    
-    // MARK: ViewModel Binding
-    
     private func setupViewModelCallbacks() {
         viewModel.onUpdate = { [weak self] in
             self?.refreshUIWithViewModel()
@@ -127,23 +125,21 @@ class ForecastViewController: UIViewController {
     private func refreshUIWithViewModel() {
         DispatchQueue.main.async {
             self.cityView.configure(city: self.viewModel.currentCityName,
-            weatherIcon: self.viewModel.weatherIconImage())
+                                    weatherIcon: self.viewModel.weatherIconImage())
             self.backgroundImageView.image = self.viewModel.backgroundImage()
             self.weatherImageView.image = self.viewModel.weatherIconImage()
             self.tableView.reloadData()
         }
     }
-    // MARK: დავამატე ლოკაციით ინფოს ჩამოტვირტვა
     
     func loadWeather(lat: Double, lon: Double) {
-           viewModel.loadForecast(lat: lat, lon: lon)
-       }
+        viewModel.loadForecast(lat: lat, lon: lon)
+    }
 }
- 
+
 // MARK: UITableViewDataSource / UITableViewDelegate
- 
+
 extension ForecastViewController: UITableViewDataSource, UITableViewDelegate {
-    
     func tableView(_ tableView: UITableView,
                    numberOfRowsInSection section: Int) -> Int {
         viewModel.numberOfRows()
@@ -175,7 +171,4 @@ extension ForecastViewController: UITableViewDataSource, UITableViewDelegate {
         return 80
     }
 }
- 
-#Preview {
-    ForecastViewController()
-}
+

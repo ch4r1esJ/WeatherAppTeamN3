@@ -5,26 +5,27 @@
 //  Created by Gegi Ghvachliani on 03.11.25.
 //
 //
+
 import UIKit
 
 class CitiesViewModel {
     // MARK: Properties
+    
     private(set) var cities: [WeatherFirstInfo] = []
-    
     private let weatherService: WeatherService
-    
     var onCitiesUpdated: (() -> Void)?
-    
     var citiesCount: Int {
         cities.count
     }
     
     // MARK: Initialization
+    
     init(weatherService: WeatherService = WeatherService()) {
         self.weatherService = weatherService
     }
     
     // MARK: Methods
+    
     func backgroundImage(for city: WeatherFirstInfo) -> UIImage? {
         let isCold = city.temp <= 10
         return UIImage(

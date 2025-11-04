@@ -1,3 +1,10 @@
+//
+//  SuggestionManager.swift
+//  WeatherApp
+//
+//  Created by Demna Koridze on 04.11.25.
+//
+
 import Foundation
 
 class SuggestionManager {

@@ -4,15 +4,14 @@
 //
 //  Created by Charles Janjgava on 11/1/25.
 //
+
 import UIKit
 
 class TabController: UITabBarController {
-    // დავამატე გვერდების ინსტანსები
     private var homeVC: HomeViewController!
     private var forecastVC: ForecastViewController!
-    private var suggestionsVC: suggestionVC!
+    private var suggestionsVC: SuggestionViewController!
     private var citiesVC: CitiesViewController!
-    
     private let topLineView: UIView = {
         let view = UIView()
         view.backgroundColor = .label
@@ -48,7 +47,7 @@ class TabController: UITabBarController {
             tag: 1
         )
         
-        suggestionsVC = suggestionVC()
+        suggestionsVC = SuggestionViewController()
         suggestionsVC.tabBarItem = UITabBarItem(
             title: "Suggestions",
             image: UIImage(systemName: "append.page"),
@@ -65,18 +64,14 @@ class TabController: UITabBarController {
         citiesVC.onCitySelected = { [weak self] weatherInfo in
             self?.handleCitySelection(weatherInfo)
         }
-        // აქ დაამატეთ თქვენი ფეიჯი
         
-        setViewControllers([homeVC, forecastVC, suggestionsVC, citiesVC], animated: true) // აქ თანმიმდევრობის მიხედვით ჩაამატეთ თქვენი ფეიჯი
+        setViewControllers([homeVC, forecastVC, suggestionsVC, citiesVC], animated: true)
     }
     
     private func handleCitySelection(_ weatherInfo: WeatherFirstInfo) {
         homeVC.loadWeather(lat: weatherInfo.lat, lon: weatherInfo.lon)
-        
         forecastVC.loadWeather(lat: weatherInfo.lat, lon: weatherInfo.lon)
-        
         suggestionsVC.loadWeather(lat: weatherInfo.lat, lon: weatherInfo.lon)
-        
         selectedIndex = 0
     }
 }

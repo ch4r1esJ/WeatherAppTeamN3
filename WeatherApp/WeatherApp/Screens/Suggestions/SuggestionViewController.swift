@@ -1,7 +1,15 @@
+//
+//  SuggestionViewController.swift
+//  WeatherApp
+//
+//  Created by Demna Koridze on 04.11.25.
+//
+
 import UIKit
 
-class suggestionVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class SuggestionViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     private let backgroundImageView: UIImageView = {
+        
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFill
@@ -10,33 +18,33 @@ class suggestionVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     }()
     
     let img: UIImageView = {
-        let img = UIImageView(image: UIImage(named: "img"))
-        img.translatesAutoresizingMaskIntoConstraints = false
-        img.contentMode = .scaleAspectFit
-        return img
+        let imageView = UIImageView(image: UIImage(named: "img"))
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.contentMode = .scaleAspectFit
+        return imageView
     }()
     
     let locationImg: UIImageView = {
-        let img = UIImageView(image: UIImage(named: "locationPin"))
-        img.translatesAutoresizingMaskIntoConstraints = false
-        img.tintColor = .gray
-        return img
+        let imageView = UIImageView(image: UIImage(named: "locationPin"))
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.tintColor = .gray
+        return imageView
     }()
     
     let locationName: UILabel = {
-        let locationName = UILabel()
-        locationName.translatesAutoresizingMaskIntoConstraints = false
-        locationName.font = .systemFont(ofSize: 20, weight: .medium)
-        locationName.textColor = .white
-        return locationName
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = .systemFont(ofSize: 20, weight: .medium)
+        label.textColor = .white
+        return label
     }()
     
-    let temp: UILabel = {
-        let temp = UILabel()
-        temp.translatesAutoresizingMaskIntoConstraints = false
-        temp.font = .systemFont(ofSize: 20, weight: .medium)
-        temp.textColor = .white
-        return temp
+    let temperature: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = .systemFont(ofSize: 20, weight: .medium)
+        label.textColor = .white
+        return label
     }()
     
     let weatherBasedSuggestionLabel: UILabel = {
@@ -49,12 +57,12 @@ class suggestionVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     }()
     
     let suggestionsTableView: UITableView = {
-        let tb = UITableView()
-        tb.translatesAutoresizingMaskIntoConstraints = false
-        tb.backgroundColor = .clear
-        tb.separatorStyle = .none
-        tb.rowHeight = 60
-        return tb
+        let tableView = UITableView()
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.backgroundColor = .clear
+        tableView.separatorStyle = .none
+        tableView.rowHeight = 60
+        return tableView
     }()
     
     var suggestArray: [String] = []
@@ -63,25 +71,21 @@ class suggestionVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     
     override func viewDidLoad() {
         super.viewDidLoad()
- 
         view.backgroundColor = UIColor(red: 8/255, green: 36/255, blue: 79/255, alpha: 0.25)
-        
         setupUI()
         configureConstraints()
         bindViewModel()
-        
         viewModel.loadWeather(for: "Tsqaltubo")
     }
     
     private func setupUI() {
         view.addSubview(backgroundImageView)
-        
         view.addSubview(locationImg)
         view.addSubview(img)
         view.addSubview(weatherBasedSuggestionLabel)
         view.addSubview(suggestionsTableView)
         view.addSubview(locationName)
-        view.addSubview(temp)
+        view.addSubview(temperature)
         
         suggestionsTableView.dataSource = self
         suggestionsTableView.delegate = self
@@ -107,8 +111,8 @@ class suggestionVC: UIViewController, UITableViewDataSource, UITableViewDelegate
             locationName.centerYAnchor.constraint(equalTo: locationImg.centerYAnchor),
             locationName.leadingAnchor.constraint(equalTo: locationImg.trailingAnchor, constant: 5),
             
-            temp.centerYAnchor.constraint(equalTo: locationImg.centerYAnchor),
-            temp.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -15),
+            temperature.centerYAnchor.constraint(equalTo: locationImg.centerYAnchor),
+            temperature.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -15),
             
             img.topAnchor.constraint(equalTo: locationImg.bottomAnchor, constant: 20),
             img.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -135,7 +139,7 @@ class suggestionVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     
     private func updateUI() {
         locationName.text = viewModel.cityName
-        temp.text = viewModel.temperature
+        temperature.text = viewModel.temperature
         suggestArray = viewModel.getSuggestions()
         
         if let backgroundImg = viewModel.backgroundImage() {
@@ -145,7 +149,6 @@ class suggestionVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         if let weatherIcon = UIImage(named: viewModel.weatherIconName) {
             img.image = weatherIcon
         }
-        
         suggestionsTableView.reloadData()
     }
     
@@ -153,7 +156,7 @@ class suggestionVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         viewModel.loadWeather(lat: lat, lon: lon)
     }
     
-    // MARK: - TableView DataSource
+    // MARK: TableView DataSource
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return suggestArray.count

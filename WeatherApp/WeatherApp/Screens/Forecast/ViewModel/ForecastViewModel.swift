@@ -4,11 +4,13 @@
 //
 //  Created by Atinati on 02.11.25.
 //
+
 import Foundation
 import UIKit
- 
+
 @MainActor
 class ForecastViewModel {
+    // MARK: Properties
     
     private(set) var items: [ForecastItem] = [] {
         didSet { onUpdate?() }
@@ -27,7 +29,6 @@ class ForecastViewModel {
     var onUpdate: (() -> Void)?
     var onError: ((String) -> Void)?
     
-    // MARK: Dependencies
     
     private let service = WeatherService()
     private let inputFormatter: DateFormatter = {
@@ -42,7 +43,7 @@ class ForecastViewModel {
         return dateFormatter
     }()
     
-    // MARK: Public API
+    // MARK: Methods
     
     func loadForecast(
         lat: Double = 42.3993,
@@ -63,10 +64,9 @@ class ForecastViewModel {
             self.processResponse(response)
         }
     }
- 
+    
     func backgroundImage() -> UIImage? {
         let defaultImage = UIImage(named: BackgroundType.sunnyDefault.assetName)
-        
         guard let firstEntry = items.first,
               let currentTemp = getTemperatureValue(from: firstEntry.temperatureText) else {
             return defaultImage
@@ -83,23 +83,16 @@ class ForecastViewModel {
         let currentTemp = getTemperatureValue(from: firstEntry.temperatureText) ?? 20
         let isCold = currentTemp <= 10.0
         let iconName = WeatherIconManager.iconName(for: firstEntry.iconCode, isCold: isCold)
-        
         print("WEATHER ICON: code=\(firstEntry.iconCode), temp=\(currentTemp)°C, isCold=\(isCold) → \(iconName)")
-        
         return UIImage(named: iconName)
     }
     
-    // MARK: Transform
-    
     private func convertToForecastItem(_ entry: WeatherItem) -> ForecastItem {
         let dayText = formatDate(entry.dtTxt)
-        
         let tempRounded = Int(round(entry.main.temp))
         let tempText = "\(tempRounded)°"
-        
         let iconCode = entry.weather.first?.icon ?? ""
         let iconURL = "https://openweathermap.org/img/wn/\(iconCode)@2x.png"
-        
         return ForecastItem(
             dateText: dayText,
             imageUrl: iconURL,
@@ -110,7 +103,6 @@ class ForecastViewModel {
     
     private func processResponse(_ response: WeatherResponse) {
         self.weatherResponse = response
- 
         let rawName = response.city.name
         let parts = rawName.split(separator: ",")
         let cleaned = parts.last?.trimmingCharacters(in: .whitespacesAndNewlines) ?? rawName
@@ -131,10 +123,8 @@ class ForecastViewModel {
                 seenDays.insert(dayKey)
                 result.append(entry)
             }
-            
             if result.count == limit { break }
         }
-        
         return result
     }
     
@@ -151,7 +141,6 @@ class ForecastViewModel {
         if Calendar.current.isDateInToday(date) {
             return "Today"
         }
-        
         return outputFormatter.string(from: date)
     }
     
@@ -163,5 +152,5 @@ class ForecastViewModel {
         return items[index]
     }
 }
- 
- 
+
+

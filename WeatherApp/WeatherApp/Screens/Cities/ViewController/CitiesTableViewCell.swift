@@ -10,38 +10,32 @@ import UIKit
 class CitiesTableViewCell: UITableViewCell {
     
     // MARK: Properties
+    
     private let containerForCell: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        
         view.layer.cornerRadius = ScreenSize.width * ( 20 / 402 )
         view.clipsToBounds = true
-        
         view.backgroundColor = UIColor(red: 8/255, green: 36/255, blue: 79/255, alpha: 0.25)
-        
         return view
     }()
     
     private let temperatureLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        
         label.font = UIFont.systemFont(ofSize: 45, weight: .semibold)
         label.textAlignment = .center
         label.textColor = .white
         label.text = "20º"
-        
         return label
     }()
     
     private let cityLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        
         label.font = UIFont.systemFont(ofSize: 35, weight: .medium)
         label.textColor = .white
         label.text = "Tbilisi"
-        
         return label
     }()
     
@@ -61,7 +55,6 @@ class CitiesTableViewCell: UITableViewCell {
         contentView.addSubview(containerForCell)
         containerForCell.addSubview(cityLabel)
         containerForCell.addSubview(temperatureLabel)
-        
         setupConstraints()
         setupInitialStyles()
     }
@@ -70,18 +63,15 @@ class CitiesTableViewCell: UITableViewCell {
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            // containerForCell
             containerForCell.topAnchor.constraint(equalTo: topAnchor),
             containerForCell.bottomAnchor.constraint(equalTo: bottomAnchor, constant: ScreenSize.height * (-15 / 874)),
             containerForCell.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 15),
             containerForCell.trailingAnchor.constraint(equalTo: trailingAnchor, constant:  -15),
             
-            // cityLabel
             cityLabel.leadingAnchor.constraint(equalTo: containerForCell.leadingAnchor, constant: 15),
             cityLabel.centerYAnchor.constraint(equalTo: containerForCell.centerYAnchor),
             cityLabel.widthAnchor.constraint(equalTo: containerForCell.widthAnchor, multiplier: 3/5),
             
-            // temperatureLabel
             temperatureLabel.trailingAnchor.constraint(equalTo: containerForCell.trailingAnchor, constant: -15),
             temperatureLabel.centerYAnchor.constraint(equalTo: containerForCell.centerYAnchor),
             temperatureLabel.widthAnchor.constraint(equalTo: containerForCell.widthAnchor, multiplier: 2/5)
@@ -92,7 +82,6 @@ class CitiesTableViewCell: UITableViewCell {
         self.backgroundColor = .clear
         self.selectionStyle = .none
         contentView.backgroundColor = .clear
-        
         layer.shadowColor = UIColor(red: 0/255, green: 16/255, blue: 38/255, alpha: 1).cgColor
         layer.shadowOpacity = 0.9
         layer.shadowOffset = CGSize(width: 0, height: 4)
@@ -104,8 +93,4 @@ class CitiesTableViewCell: UITableViewCell {
         cityLabel.text = weatherInfo.name
         temperatureLabel.text = "\(Int(weatherInfo.temp))º"
     }
-    
-}
-#Preview {
-    CitiesViewController()
 }

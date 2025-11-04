@@ -9,12 +9,15 @@ import Foundation
 import UIKit
 
 class DetailsViewModel {
+    // MARK: UI Components
     
     var cityName: String = "Tsqaltubo"
     var iconName: String = "heavyrainIcon"
     var details: [WeatherDetail] = []
     var weatherService = WeatherService()
     var currentTemp: Double = 0.0
+    
+    // MARK: Methods
     
     func loadWeatherDetails(lat: Double, lon: Double, completion: @escaping () -> Void) {
         weatherService.loadWeatherForcast(lat: lat, lon: lon) { [weak self] response in
@@ -24,7 +27,6 @@ class DetailsViewModel {
             self.cityName = response.city.name
             self.currentTemp = first?.main.temp ?? 0.0
             
-            // dinamiurad irchevs icons
             let prefix = String(first?.weather.first?.icon.prefix(2) ?? "01")
             let isCold = self.currentTemp <= 10
             self.iconName = WeatherIconManager.iconName(for: prefix, isCold: isCold)

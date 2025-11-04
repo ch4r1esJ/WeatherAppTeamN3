@@ -3,33 +3,22 @@
 //
 //  Created by Charles Janjgava on 11/3/25.
 //
- 
+
 import Foundation
 import UIKit
- 
+
 class HomeViewModel {
+    // MARK: Properties
+    
     private let weatherService: WeatherService
     private(set) var weatherResponse: WeatherResponse?
     
     var onWeatherLoaded: ((WeatherResponse) -> Void)?
     
+    // MARK: Init
+    
     init(weatherService: WeatherService = WeatherService()) {
         self.weatherService = weatherService
-    }
-    
-    func loadWeather(lat: Double, lon: Double) {
-        weatherService.loadWeatherForcast(lat: lat, lon: lon) { [weak self] response in
-            self?.weatherResponse = response
-            self?.onWeatherLoaded?(response)
-        }
-    }
-    
-    func getIconURL(from iconCode: String) -> String {
-        return "https://openweathermap.org/img/wn/\(iconCode)@2x.png"
-    }
-    
-    func getCurrentWeatherIcon() -> String? {
-        return weatherResponse?.list.first?.weather.first?.icon
     }
     
     var temperature: String {
@@ -56,13 +45,27 @@ class HomeViewModel {
         
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
-        let today = dateFormatter.string(from: Date())
-        
+        _ = dateFormatter.string(from: Date())
         return Array(list.prefix(8))
     }
     
     func numberOfForecastItems() -> Int {
         return todaysForecast.count
+    }
+    
+    func loadWeather(lat: Double, lon: Double) {
+        weatherService.loadWeatherForcast(lat: lat, lon: lon) { [weak self] response in
+            self?.weatherResponse = response
+            self?.onWeatherLoaded?(response)
+        }
+    }
+    
+    func getIconURL(from iconCode: String) -> String {
+        return "https://openweathermap.org/img/wn/\(iconCode)@2x.png"
+    }
+    
+    func getCurrentWeatherIcon() -> String? {
+        return weatherResponse?.list.first?.weather.first?.icon
     }
     
     private func formatTime(from dateString: String) -> String {
@@ -81,13 +84,11 @@ class HomeViewModel {
         guard index < todaysForecast.count else {
             return ("--", "", "--")
         }
-        
         let item = todaysForecast[index]
         let temp = "\(Int(item.main.temp))°C"
         let iconCode = item.weather.first?.icon ?? "01d"
         let iconURL = getIconURL(from: iconCode)
         let time = formatTime(from: item.dtTxt)
-        
         return (temp, iconURL, time)
     }
     

@@ -16,7 +16,6 @@ class WeatherService {
     init(networkManager: NetworkManager = NetworkManager()) {
         self.networkManager = networkManager
     }
-    // es axla davamate
     func getFirstInfo(for cityName: String, completion: @escaping (Result<WeatherFirstInfo, Error>) -> Void) {
         let url = "https://api.openweathermap.org/data/2.5/weather?q=\(cityName)&appid=390b1c9d792d64568df3ea91ce636c59&units=metric"
         
@@ -37,7 +36,7 @@ class WeatherService {
             }
         }
     }
-
+    
     
     func getCoordinates(for cityName: String, completion: @escaping (Double, Double) -> ()) {
         let url = "https://api.openweathermap.org/data/2.5/weather?q=\(cityName)&appid=390b1c9d792d64568df3ea91ce636c59&units=metric"
@@ -57,23 +56,23 @@ class WeatherService {
     }
     
     func loadWeatherForcast(lat: Double, lon: Double, completion: @escaping (WeatherResponse) -> ()) {
-            let url = "https://api.openweathermap.org/data/2.5/forecast?lat=\(lat)&lon=\(lon)&appid=eda9b39a8f8b30c8f5eddbf6f47013f0&units=metric"
-            
-            networkManager.getData(url: url) { (result: Result<WeatherResponse, Error>) in
-                switch result {
-                case .success(let weatherResponse):
-                    self.weatherResponse = weatherResponse
-                    completion(weatherResponse)
-    
-                case .failure(let error):
-                    print("Error: \(error.localizedDescription)")
-                }
+        let url = "https://api.openweathermap.org/data/2.5/forecast?lat=\(lat)&lon=\(lon)&appid=eda9b39a8f8b30c8f5eddbf6f47013f0&units=metric"
+        
+        networkManager.getData(url: url) { (result: Result<WeatherResponse, Error>) in
+            switch result {
+            case .success(let weatherResponse):
+                self.weatherResponse = weatherResponse
+                completion(weatherResponse)
+                
+            case .failure(let error):
+                print("Error: \(error.localizedDescription)")
             }
         }
+    }
     
     func loadWeatherForCity(_ cityName: String, completion: @escaping (WeatherResponse?) -> Void) {
-           getCoordinates(for: cityName) { [weak self] lat, lon in
-               self?.loadWeatherForcast(lat: lat, lon: lon, completion: completion)
-           }
-       }
+        getCoordinates(for: cityName) { [weak self] lat, lon in
+            self?.loadWeatherForcast(lat: lat, lon: lon, completion: completion)
+        }
+    }
 }
