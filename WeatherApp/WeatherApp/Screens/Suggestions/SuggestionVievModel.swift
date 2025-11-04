@@ -4,39 +4,21 @@
 //
 //  Created by Gegi Ghvachliani on 04.11.25.
 //
+
 import Foundation
 import UIKit
 
 class SuggestionViewModel {
+    
     var onUpdate: (() -> Void)?
+    var onWeatherLoaded: ((WeatherResponse) -> Void)?
+    
     private(set) var items: [ForecastItem] = [] {
         didSet { onUpdate?() }
     }
-    
     private let weatherService: WeatherService
     private let suggestionManager = SuggestionManager()
     private(set) var weatherResponse: WeatherResponse?
-    
-    var onWeatherLoaded: ((WeatherResponse) -> Void)?
-    
-    init(weatherService: WeatherService = WeatherService()) {
-        self.weatherService = weatherService
-    }
-    
-    func loadWeather(for cityName: String) {
-        weatherService.loadWeatherForCity(cityName) { [weak self] response in
-            guard let response = response else { return }
-            self?.weatherResponse = response
-            self?.onWeatherLoaded?(response)
-        }
-    }
-    
-    func loadWeather(lat: Double, lon: Double) {
-        weatherService.loadWeatherForcast(lat: lat, lon: lon) { [weak self] response in
-            self?.weatherResponse = response
-            self?.onWeatherLoaded?(response)
-        }
-    }
     
     var cityName: String {
         weatherResponse?.city.name ?? "Unknown"
@@ -54,6 +36,29 @@ class SuggestionViewModel {
         return getIconName(from: iconCode)
     }
     
+    // MARK: Init
+    
+    init(weatherService: WeatherService = WeatherService()) {
+        self.weatherService = weatherService
+    }
+    
+    // MARK: Methods
+    
+    func loadWeather(for cityName: String) {
+        weatherService.loadWeatherForCity(cityName) { [weak self] response in
+            guard let response = response else { return }
+            self?.weatherResponse = response
+            self?.onWeatherLoaded?(response)
+        }
+    }
+    
+    func loadWeather(lat: Double, lon: Double) {
+        weatherService.loadWeatherForcast(lat: lat, lon: lon) { [weak self] response in
+            self?.weatherResponse = response
+            self?.onWeatherLoaded?(response)
+        }
+    }
+    
     func getSuggestions() -> [String] {
         return suggestionManager.getSuggestions(for: weatherIconName)
     }
@@ -62,7 +67,6 @@ class SuggestionViewModel {
         guard let temp = weatherResponse?.list.first?.main.temp else {
             return UIImage(named: BackgroundType.sunnyDefault.assetName)
         }
-        
         if temp <= 10.0 {
             return UIImage(named: BackgroundType.coldWeather.assetName)
         } else {
@@ -71,9 +75,9 @@ class SuggestionViewModel {
     }
     
     private func getTemperatureValue(from text: String) -> Double? {
-            let cleanedString = text.filter { "0123456789-.".contains($0) }
-            return Double(cleanedString)
-        }
+        let cleanedString = text.filter { "0123456789-.".contains($0) }
+        return Double(cleanedString)
+    }
     
     private func getIconName(from iconCode: String) -> String {
         switch iconCode {

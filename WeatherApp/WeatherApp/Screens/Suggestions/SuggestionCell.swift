@@ -1,7 +1,14 @@
+//
+//  SuggestionCell.swift
+//  WeatherApp
+//
+//  Created by Demna Koridze on 04.11.25.
+//
+
 import UIKit
 
 class SuggestionCell: UITableViewCell {
-
+    
     private let containerForCell: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -33,19 +40,21 @@ class SuggestionCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
         backgroundColor = .clear
         contentView.backgroundColor = .clear
         selectionStyle = .none
-        
         setupUI()
         setupInitialStyles()
         configureConstraints()
     }
     
+    // MARK: Init
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    // MARK: Methods
     
     private func setupUI() {
         contentView.addSubview(containerForCell)
@@ -72,17 +81,15 @@ class SuggestionCell: UITableViewCell {
     }
     
     private func setupInitialStyles() {
-          self.backgroundColor = .clear
-          self.selectionStyle = .none
-          contentView.backgroundColor = .clear
-          
-          layer.shadowColor = UIColor(red: 0/255, green: 16/255, blue: 38/255, alpha: 1).cgColor
-          layer.shadowOpacity = 0.50
-          layer.shadowOffset = CGSize(width: 0, height: 4)
-          layer.shadowRadius = 16
-          layer.masksToBounds = false
-      }
-   
+        self.backgroundColor = .clear
+        self.selectionStyle = .none
+        contentView.backgroundColor = .clear
+        layer.shadowColor = UIColor(red: 0/255, green: 16/255, blue: 38/255, alpha: 1).cgColor
+        layer.shadowOpacity = 0.50
+        layer.shadowOffset = CGSize(width: 0, height: 4)
+        layer.shadowRadius = 16
+        layer.masksToBounds = false
+    }
     
     func configure(with suggestion: String) {
         suggestionTxt.text = suggestion

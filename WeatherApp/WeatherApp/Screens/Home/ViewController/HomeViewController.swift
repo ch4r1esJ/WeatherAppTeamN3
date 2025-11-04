@@ -9,7 +9,7 @@ import UIKit
 
 class HomeViewController: UIViewController {
     
-    // MARK: - Properties
+    // MARK: Properties
     
     private let locationView = LocationView()
     private let infoView = InfoView()
@@ -43,7 +43,6 @@ class HomeViewController: UIViewController {
         button.setImage(image, for: .normal)
         button.tintColor = .white
         button.semanticContentAttribute = .forceRightToLeft
-        
         return button
     }()
     
@@ -51,12 +50,10 @@ class HomeViewController: UIViewController {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = .clear
-        
         view.layer.shadowColor = UIColor.black.cgColor
         view.layer.shadowOpacity = 0.4
         view.layer.shadowOffset = CGSize(width: 0, height: 12)
         view.layer.shadowRadius = 24
-        
         return view
     }()
     
@@ -73,7 +70,6 @@ class HomeViewController: UIViewController {
         view.clipsToBounds = true
         view.showsHorizontalScrollIndicator = false
         view.translatesAutoresizingMaskIntoConstraints = false
-        
         return view
     }()
     
@@ -84,7 +80,7 @@ class HomeViewController: UIViewController {
         return imageView
     }()
     
-    // MARK: - Life Cycle
+    // MARK: Life Cycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -94,7 +90,6 @@ class HomeViewController: UIViewController {
         configure()
         setupActions()
         homeViewModel.loadWeather(lat: 42.3993, lon: 42.5491)
-        
         homeViewModel.onWeatherLoaded = { [weak self] _ in
             DispatchQueue.main.async {
                 self?.configure()
@@ -103,7 +98,7 @@ class HomeViewController: UIViewController {
         }
     }
     
-    // MARK: - Methods
+    // MARK: Methods
     
     private func setupBackgroundImage() {
         view.addSubview(backgroundImage)
@@ -122,7 +117,6 @@ class HomeViewController: UIViewController {
         view.addSubview(todaySectionView)
         view.addSubview(forecastContainer)
         forecastContainer.addSubview(forecastList)
-        
         todaySectionView.addSubview(todayLabel)
         todaySectionView.addSubview(detailsButton)
         
@@ -191,10 +185,8 @@ extension HomeViewController: UICollectionViewDataSource {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "HomeCell", for: indexPath) as? HomeCell else {
             return UICollectionViewCell()
         }
-        
         let forecast = homeViewModel.forecastIcon(at: indexPath.row)
         cell.configure(temperature: forecast.temperature, iconURL: forecast.iconURL, time: forecast.time)
-        
         return cell
     }
 }

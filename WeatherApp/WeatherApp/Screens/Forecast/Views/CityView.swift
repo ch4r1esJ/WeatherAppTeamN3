@@ -4,13 +4,16 @@
 //
 //  Created by Atinati on 03.11.25.
 //
+
 import UIKit
- 
+
 class CityView: UIView {
     
     // MARK: Properties
     
     private let hStack = UIStackView.make(axis: .horizontal, distribution: .fill, alignment: .center, spacing: 8)
+    
+    private let cityName = UILabel.make(text: "", fontSize: 17, weight: .bold, color: .white)
     
     private let locationPin: UIImageView = {
         let imageView = UIImageView()
@@ -20,8 +23,6 @@ class CityView: UIView {
         imageView.tintColor = .white
         return imageView
     }()
-    
-    private let cityName = UILabel.make(text: "", fontSize: 17, weight: .bold, color: .white)
     
     private let weatherImage: UIImageView = {
         let imageView = UIImageView()
@@ -46,7 +47,6 @@ class CityView: UIView {
     
     private func setupView() {
         backgroundColor = .clear
-        
         addSubview(hStack)
         addSubview(weatherImage)
         
@@ -72,8 +72,8 @@ class CityView: UIView {
     func configure(city: String, weatherIcon: UIImage?) {
         let parts = city.split(separator: ",")
         let cleanedCity = parts.last?.trimmingCharacters(in: .whitespacesAndNewlines) ?? city
- 
-            cityName.text = cleanedCity
-            weatherImage.image = weatherIcon
-        }
+        
+        cityName.text = cleanedCity
+        weatherImage.image = weatherIcon
+    }
 }

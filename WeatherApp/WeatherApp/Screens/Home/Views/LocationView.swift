@@ -8,7 +8,7 @@
 import UIKit
 
 class LocationView: UIView {
-    // MARK: - Properties
+    // MARK: Properties
     
     private let hStack = UIStackView.make(axis: .horizontal, distribution: .fill, alignment: .center, spacing: 8)
     
@@ -31,7 +31,7 @@ class LocationView: UIView {
         return imageView
     }()
     
-    // MARK: - Init
+    // MARK: Init
     
     init() {
         super.init(frame: .zero)
@@ -42,11 +42,10 @@ class LocationView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - Methods
+    // MARK: Methods
     
     private func setupView() {
         backgroundColor = .clear
-        
         addSubview(hStack)
         addSubview(weatherImage)
         

@@ -9,27 +9,26 @@ import UIKit
 
 class CitiesViewController: UIViewController {
     // MARK: Properties
+    
     private let viewModel = CitiesViewModel()
+    var onCitySelected: ((WeatherFirstInfo) -> Void)?
     
     private let backgroundImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFill
         imageView.image = .defaultBackground
-        
         return imageView
     }()
     
     private let addButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        
         button.setTitle("Add city", for: .normal)
         button.titleLabel?.textColor = .lightGray
         button.backgroundColor = .init(white: 0.4, alpha: 0.3)
         button.layer.cornerRadius = 10
         button.clipsToBounds = true
-        
         return button
     }()
     
@@ -44,10 +43,10 @@ class CitiesViewController: UIViewController {
         let rightPadding = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: 0))
         textField.rightView = rightPadding
         textField.rightViewMode = .always
-        
         textField.backgroundColor = .init(white: 0, alpha: 0.3)
         textField.textColor = .white
         textField.font = UIFont.systemFont(ofSize: 20, weight: .regular)
+        
         let placeholderText = "Search"
         let placeholderColor = UIColor.lightGray
         
@@ -55,43 +54,37 @@ class CitiesViewController: UIViewController {
             string: placeholderText,
             attributes: [NSAttributedString.Key.foregroundColor: placeholderColor]
         )
-        
         textField.textAlignment = .left
         textField.layer.cornerRadius = 15
         textField.clipsToBounds = true
-        
         return textField
     }()
     
     private var citiesTableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        
         tableView.rowHeight = ScreenSize.height * (110 / 874)
         tableView.backgroundColor = .clear
-        
         return tableView
     }()
     
-    var onCitySelected: ((WeatherFirstInfo) -> Void)?
     // MARK: Life Cycles
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .red
-        
         setupUI()
         bindViewModel()
         setupButtonAction()
     }
     
     // MARK: Methods
+    
     private func setupUI() {
         view.addSubview(backgroundImageView)
         view.addSubview(searchTextField)
         view.addSubview(addButton)
         view.addSubview(citiesTableView)
-        
         configureTableView()
         setupConstraints()
     }
@@ -123,7 +116,6 @@ class CitiesViewController: UIViewController {
     private func configureTableView() {
         citiesTableView.dataSource = self
         citiesTableView.delegate = self
-        
         citiesTableView.register(CitiesTableViewCell.self, forCellReuseIdentifier: "CitiesTableViewCell")
     }
     
@@ -142,7 +134,6 @@ class CitiesViewController: UIViewController {
                   !cityName.isEmpty else {
                 return
             }
-            
             self.viewModel.addCity(cityName) { success in
                 DispatchQueue.main.async {
                     if success {
@@ -151,11 +142,9 @@ class CitiesViewController: UIViewController {
                 }
             }
         }
-        
         addButton.addAction(action, for: .touchUpInside)
     }
 }
-
 
 extension CitiesViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -178,7 +167,9 @@ extension CitiesViewController: UITableViewDataSource, UITableViewDelegate {
         guard let city = viewModel.getCity(at: indexPath.row) else { return }
         let bg = viewModel.backgroundImage(for: city)
         backgroundImageView.image = bg
-        onCitySelected?(city)
+        onCitySelected?(
+            city
+        )
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
@@ -192,6 +183,3 @@ extension CitiesViewController: UITableViewDataSource, UITableViewDelegate {
     }
 }
 
-#Preview {
-    CitiesViewController()
-}

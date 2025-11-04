@@ -4,11 +4,12 @@
 //
 //  Created by Atinati on 02.11.25.
 //
+
 import UIKit
 import Foundation
 
- class ForecastCell: UITableViewCell {
-
+class ForecastCell: UITableViewCell {
+    
     static let identifier = "ForecastCell"
     
     // MARK:  UI Elements
@@ -21,7 +22,7 @@ import Foundation
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
-
+    
     private let dateLabel: UILabel = {
         let label = UILabel()
         label.textColor = .white
@@ -29,7 +30,7 @@ import Foundation
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-
+    
     private let weatherIcon: UIImageView = {
         let view = UIImageView()
         view.tintColor = .white
@@ -37,7 +38,7 @@ import Foundation
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
-
+    
     private let tempLabel: UILabel = {
         let label = UILabel()
         label.textColor = .white
@@ -56,7 +57,7 @@ import Foundation
         setupSubviews()
         setupConstraints()
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -67,7 +68,6 @@ import Foundation
         self.backgroundColor = .clear
         self.selectionStyle = .none
         contentView.backgroundColor = .clear
-        
         layer.shadowColor = UIColor(red: 0/255, green: 16/255, blue: 38/255, alpha: 1).cgColor
         layer.shadowOpacity = 0.50
         layer.shadowOffset = CGSize(width: 0, height: 4)
@@ -91,20 +91,20 @@ import Foundation
             containerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -4),
             containerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             containerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-
+            
             dateLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
             dateLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: padding),
-
+            
             weatherIcon.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
             weatherIcon.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
             weatherIcon.widthAnchor.constraint(equalToConstant: iconSize),
             weatherIcon.heightAnchor.constraint(equalToConstant: iconSize),
-
+            
             tempLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
             tempLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -padding),
         ])
     }
-
+    
     // MARK: Configuration
     
     func configure(dateText: String, imageUrl: String, temperatureText: String) {
@@ -116,17 +116,17 @@ import Foundation
     private func loadWeatherIcon(from imageUrl: String) {
         weatherIcon.image = nil
         weatherIcon.tintColor = .white
-
+        
         guard let url = URL(string: imageUrl) else {
             weatherIcon.image = UIImage(systemName: "cloud.fill")
             return
         }
-
+        
         URLSession.shared.dataTask(with: url) { [weak self] data, _, _ in
             guard let self = self,
                   let data = data,
                   let image = UIImage(data: data) else { return }
-                  
+            
             DispatchQueue.main.async {
                 self.weatherIcon.image = image
             }
