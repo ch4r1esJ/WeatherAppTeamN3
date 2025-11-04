@@ -10,7 +10,7 @@ class CityView: UIView {
     
     // MARK: Properties
     
-    private let hStack = UIStackView.make(axis: .horizontal, distribution: .fill, alignment: .center)
+    private let hStack = UIStackView.make(axis: .horizontal, distribution: .fill, alignment: .center, spacing: 8)
     
     private let locationPin: UIImageView = {
         let imageView = UIImageView()
@@ -21,7 +21,7 @@ class CityView: UIView {
         return imageView
     }()
     
-    private let cityName = UILabel.make(text: "Tbilisi", fontSize: 17, weight: .bold, color: .white)
+    private let cityName = UILabel.make(text: "", fontSize: 17, weight: .bold, color: .white)
     
     private let weatherImage: UIImageView = {
         let imageView = UIImageView()
@@ -55,7 +55,7 @@ class CityView: UIView {
         NSLayoutConstraint.activate([
             hStack.topAnchor.constraint(equalTo: topAnchor, constant: 16),
             hStack.leadingAnchor.constraint(equalTo: leadingAnchor),
-            hStack.trailingAnchor.constraint(equalTo: trailingAnchor),
+            hStack.heightAnchor.constraint(equalToConstant: 24),
             locationPin.widthAnchor.constraint(equalToConstant: 20),
             locationPin.heightAnchor.constraint(equalToConstant: 20),
             
@@ -70,9 +70,10 @@ class CityView: UIView {
     // MARK: Configuration
     
     func configure(city: String, weatherIcon: UIImage?) {
-            cityName.text = city
+        let parts = city.split(separator: ",")
+        let cleanedCity = parts.last?.trimmingCharacters(in: .whitespacesAndNewlines) ?? city
+ 
+            cityName.text = cleanedCity
             weatherImage.image = weatherIcon
         }
 }
- 
-
