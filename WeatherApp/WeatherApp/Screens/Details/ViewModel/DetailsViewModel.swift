@@ -13,6 +13,7 @@ class DetailsViewModel {
     var cityName: String = "Tsqaltubo"
     var iconName: String = "heavyrainIcon"
     var details: [WeatherDetail] = []
+    var weatherService = WeatherService()
     var currentTemp: Double = 0.0
     
     func loadWeatherDetails(lat: Double, lon: Double, completion: @escaping () -> Void) {
