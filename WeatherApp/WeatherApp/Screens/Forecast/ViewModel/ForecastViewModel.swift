@@ -45,8 +45,8 @@ class ForecastViewModel {
     // MARK: Public API
     
     func loadForecast(
-        lat: Double = 41.7151,
-        lon: Double = 44.8271
+        lat: Double = 42.3993,
+        lon: Double = 42.5491
     ) {
         service.loadWeatherForcast(lat: lat, lon: lon) { [weak self] weatherResponse in
             guard let self else { return }

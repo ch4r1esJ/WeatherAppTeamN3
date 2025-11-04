@@ -10,7 +10,7 @@ import UIKit
 // sheicvleba aqauroba. ui-s chvenebisas ro empty ariyos magitoa hardcoded :D
 class DetailsViewModel {
     
-    var cityName: String = "Ushguli"
+    var cityName: String = "Tsqaltubo"
     var iconName: String = "heavyrainIcon"
     var details: [WeatherDetail] = []
 

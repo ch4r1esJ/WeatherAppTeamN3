@@ -93,7 +93,7 @@ class HomeViewController: UIViewController {
         registerCell()
         configure()
         setupActions()
-        homeViewModel.loadWeather(lat: 43.151, lon: 42.271)
+        homeViewModel.loadWeather(lat: 42.3993, lon: 42.5491)
         
         homeViewModel.onWeatherLoaded = { [weak self] _ in
             DispatchQueue.main.async {
@@ -173,9 +173,6 @@ class HomeViewController: UIViewController {
             self.present(detailsVC, animated: true)
         }, for: .touchUpInside)
     }
-    
-//    @objc private func detailsButtonTapped() {
-//    }
     
     func configure() {
         locationView.configure(city: homeViewModel.cityName, image: homeViewModel.weatherIconImage(), )

@@ -73,7 +73,3 @@ class LocationView: UIView {
         weatherImage.image = image
     }
 }
-
-#Preview {
-    LocationView()
-}
