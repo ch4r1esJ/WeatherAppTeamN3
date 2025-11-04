@@ -13,7 +13,6 @@ class CitiesViewController: UIViewController {
     private let viewModel = CitiesViewModel()
     var onCitySelected: ((WeatherFirstInfo) -> Void)?
     
-    
     private let backgroundImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
