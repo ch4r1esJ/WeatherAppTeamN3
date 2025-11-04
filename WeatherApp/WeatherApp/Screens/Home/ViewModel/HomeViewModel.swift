@@ -36,7 +36,7 @@ class HomeViewModel {
     
     var temperature: String {
         guard let temp = weatherResponse?.list.first?.main.temp else { return "--" }
-        return "\(Int(temp))"
+        return "\(Int(temp))°"
     }
 
     var max: String {
@@ -100,4 +100,34 @@ class HomeViewModel {
         default: return "cloudIcon"
         }
     }
+    
+    private func getTemperatureValue(from text: String) -> Double? {
+            let cleanedString = text.filter { "0123456789-.".contains($0) }
+            return Double(cleanedString)
+        }
+        
+        func backgroundImage() -> UIImage? {
+            let defaultImage = UIImage(named: BackgroundType.sunnyDefault.assetName)
+            guard let firstEntry = weatherResponse?.list.first else {
+                return defaultImage
+            }
+            let currentTemp = firstEntry.main.temp
+            if currentTemp <= 10 {
+                return UIImage(named: BackgroundType.coldWeather.assetName)
+            } else {
+                return defaultImage
+            }
+        }
+        
+        func weatherIconImage() -> UIImage? {
+            guard let firstEntry = weatherResponse?.list.first else {
+                return UIImage(named: "defaultIcon")
+            }
+            let fullCode = firstEntry.weather.first?.icon ?? "01d"
+                let prefix = String(fullCode.prefix(2))
+            let temp = firstEntry.main.temp
+            let isCold = temp <= 10
+            let iconName = WeatherIconManager.iconName(for: prefix, isCold: isCold)
+            return UIImage(named: iconName) ?? UIImage(named: "defaultIcon")
+        }
 }
