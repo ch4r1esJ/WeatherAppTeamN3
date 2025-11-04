@@ -46,7 +46,7 @@ class HomeCell: UICollectionViewCell {
         label.textAlignment = .center
         return label
     }()
- 
+    
     // MARK: - Init
     
     override init(frame: CGRect) {
@@ -105,20 +105,20 @@ class HomeCell: UICollectionViewCell {
             cornerRadius: 22
         ).cgPath
     }
-        
+    
     func configure(temperature: String, iconURL: String, time: String) {
-            temperatureLabel.text = temperature
-            timeLabel.text = time
-            weatherIcon.image = UIImage(systemName: "cloud.fill")
-     
-            if let url = URL(string: iconURL) {
-                URLSession.shared.dataTask(with: url) { [weak self] data, _, _ in
-                    guard let data = data,
-                          let image = UIImage(data: data) else { return }
-                    DispatchQueue.main.async {
-                        self?.weatherIcon.image = image
-                    }
-                }.resume()
-            }
+        temperatureLabel.text = temperature
+        timeLabel.text = time
+        weatherIcon.image = UIImage(systemName: "cloud.fill")
+        
+        if let url = URL(string: iconURL) {
+            URLSession.shared.dataTask(with: url) { [weak self] data, _, _ in
+                guard let data = data,
+                      let image = UIImage(data: data) else { return }
+                DispatchQueue.main.async {
+                    self?.weatherIcon.image = image
+                }
+            }.resume()
         }
+    }
 }

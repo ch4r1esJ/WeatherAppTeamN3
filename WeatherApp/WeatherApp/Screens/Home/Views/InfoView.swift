@@ -73,9 +73,7 @@ class InfoView: UIView {
             maxMinLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16)
         ])
     }
-    
-    // MARK: - Configuration
-    
+        
     func configure(temperature: String, max: String, min: String) {
         temperatureLabel.text = temperature
         maxMinLabel.text = "Max.: \(max)º Min.: \(min)º"

@@ -62,7 +62,6 @@ class WeatherService {
             networkManager.getData(url: url) { (result: Result<WeatherResponse, Error>) in
                 switch result {
                 case .success(let weatherResponse):
-                    print("City: \(weatherResponse.city.name)")
                     self.weatherResponse = weatherResponse
                     completion(weatherResponse)
     
