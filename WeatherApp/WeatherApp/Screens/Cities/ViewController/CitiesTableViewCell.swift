@@ -84,7 +84,7 @@ class CitiesTableViewCell: UITableViewCell {
             // temperatureLabel
             temperatureLabel.trailingAnchor.constraint(equalTo: containerForCell.trailingAnchor, constant: -15),
             temperatureLabel.centerYAnchor.constraint(equalTo: containerForCell.centerYAnchor),
-            temperatureLabel.widthAnchor.constraint(equalTo: containerForCell.widthAnchor, multiplier: 1/5)
+            temperatureLabel.widthAnchor.constraint(equalTo: containerForCell.widthAnchor, multiplier: 2/5)
         ])
     }
     

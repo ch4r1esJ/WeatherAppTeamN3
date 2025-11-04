@@ -26,12 +26,12 @@ class CitiesViewModel {
     
     // MARK: Methods
     func backgroundImage(for city: WeatherFirstInfo) -> UIImage? {
-          let isCold = city.temp <= 10
-          return UIImage(
-              named: isCold ? BackgroundType.coldWeather.assetName
-                            : BackgroundType.sunnyDefault.assetName
-          )
-      }
+        let isCold = city.temp <= 10
+        return UIImage(
+            named: isCold ? BackgroundType.coldWeather.assetName
+            : BackgroundType.sunnyDefault.assetName
+        )
+    }
     
     func addCity(_ cityName: String, completion: @escaping (Bool) -> Void) {
         weatherService.getFirstInfo(for: cityName) { [weak self] result in

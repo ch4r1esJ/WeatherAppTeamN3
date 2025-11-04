@@ -75,7 +75,7 @@ class TabController: UITabBarController {
         
         forecastVC.loadWeather(lat: weatherInfo.lat, lon: weatherInfo.lon)
         
-       // suggestionsVC.loadWeather(lat: weatherInfo.lat, lon: weatherInfo.lon)
+        suggestionsVC.loadWeather(lat: weatherInfo.lat, lon: weatherInfo.lon)
         
         selectedIndex = 0
     }
