@@ -81,6 +81,13 @@ struct ForecastItem {
     let temperatureText: String
     let iconCode: String
 }
+// details-ზე cell-ების ინფოს struct
+
+struct WeatherDetail {
+    let title: String
+    let value: String
+}
+
 
 struct Weather: Decodable {
     let id: Int
