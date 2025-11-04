@@ -100,4 +100,12 @@ class HomeViewModel {
         default: return "cloudIcon"
         }
     }
+    
+    // MARK: დავამატე ჩამოტვირთვის მეთოდი მხოლოდ ლოკაციით, დელეგატისთვის
+    func loadWeather(lat: Double, lon: Double) {
+           weatherService.loadWeatherForcast(lat: lat, lon: lon) { [weak self] response in
+               self?.weatherResponse = response
+               self?.onWeatherLoaded?(response)
+           }
+       }
 }

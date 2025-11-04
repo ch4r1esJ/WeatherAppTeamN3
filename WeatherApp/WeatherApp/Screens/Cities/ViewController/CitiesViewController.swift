@@ -8,8 +8,8 @@
 import UIKit
 
 class CitiesViewController: UIViewController {
-    
     // MARK: Properties
+    private let viewModel = CitiesViewModel()
     
     private let backgroundImageView: UIImageView = {
         let imageView = UIImageView()
@@ -46,6 +46,8 @@ class CitiesViewController: UIViewController {
         textField.rightViewMode = .always
         
         textField.backgroundColor = .init(white: 0, alpha: 0.3)
+        textField.textColor = .white
+        textField.font = UIFont.systemFont(ofSize: 20, weight: .regular)
         let placeholderText = "Search"
         let placeholderColor = UIColor.lightGray
         
@@ -71,6 +73,7 @@ class CitiesViewController: UIViewController {
         return tableView
     }()
     
+    var onCitySelected: ((WeatherFirstInfo) -> Void)?
     // MARK: Life Cycles
     
     override func viewDidLoad() {
@@ -78,6 +81,8 @@ class CitiesViewController: UIViewController {
         view.backgroundColor = .red
         
         setupUI()
+        bindViewModel()
+        setupButtonAction()
     }
     
     // MARK: Methods
@@ -121,18 +126,60 @@ class CitiesViewController: UIViewController {
         
         citiesTableView.register(CitiesTableViewCell.self, forCellReuseIdentifier: "FavouritesTableViewCell")
     }
+    
+    private func bindViewModel() {
+         viewModel.onCitiesUpdated = { [weak self] in
+             DispatchQueue.main.async {
+                 self?.citiesTableView.reloadData()
+             }
+         }
+     }
+    
+    private func setupButtonAction() {
+        let action = UIAction { [weak self] _ in
+            guard let self = self,
+                  let cityName = self.searchTextField.text,
+                  !cityName.isEmpty else {
+                return
+            }
+            
+            self.viewModel.addCity(cityName) { success in
+                DispatchQueue.main.async {
+                    if success {
+                        self.searchTextField.text = ""
+                    }
+                }
+            }
+        }
+        
+        addButton.addAction(action, for: .touchUpInside)
+    }
 }
- // TODO: შესაცლელია
+
+
+// TODO: შესაცლელია
 extension CitiesViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        30
+        viewModel.citiesCount
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "FavouritesTableViewCell", for: indexPath) as? CitiesTableViewCell else { return UITableViewCell() }
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "FavouritesTableViewCell", for: indexPath) as? CitiesTableViewCell,
+              let city = viewModel.getCity(at: indexPath.row) else {
+            return UITableViewCell()
+        }
         
+        cell.configure(with: city)
         return cell
     }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+           tableView.deselectRow(at: indexPath, animated: true)
+           
+           guard let city = viewModel.getCity(at: indexPath.row) else { return }
+           
+           onCitySelected?(city)
+       }
 }
 
 #Preview {

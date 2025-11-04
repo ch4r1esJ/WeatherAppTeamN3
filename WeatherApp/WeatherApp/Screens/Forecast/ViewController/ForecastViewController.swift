@@ -133,6 +133,10 @@ class ForecastViewController: UIViewController {
             weatherIcon: self.viewModel.weatherIconImage())
         }
     }
+    // MARK: დავამატე ლოკაციით ინფოს ჩამოტვირტვა
+    func loadWeather(lat: Double, lon: Double) {
+           viewModel.loadForecast(lat: lat, lon: lon)
+       }
 }
 
 // MARK: UITableViewDataSource / UITableViewDelegate
