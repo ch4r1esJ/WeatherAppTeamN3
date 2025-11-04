@@ -7,6 +7,11 @@
 import UIKit
 
 class TabController: UITabBarController {
+    // დავამატე გვერდების ინსტანსები
+    private var homeVC: HomeViewController!
+    private var forecastVC: ForecastViewController!
+    private var citiesVC: CitiesViewController!
+    
     private let topLineView: UIView = {
         let view = UIView()
         view.backgroundColor = .label
@@ -28,22 +33,43 @@ class TabController: UITabBarController {
     
     private func setupTabs() {
         
-        let forecastVC = ForecastViewController()
+         forecastVC = ForecastViewController()
         forecastVC.tabBarItem = UITabBarItem(
             title: "Forecast",
             image: UIImage(systemName: "cloud.sun"),
             tag: 0
         )
         
-        let homeVC = HomeViewController()
+         homeVC = HomeViewController()
         homeVC.tabBarItem = UITabBarItem(
             title: "Home",
             image: UIImage(systemName: "house"),
             tag: 1
         )
         
+         citiesVC = CitiesViewController()
+        citiesVC.tabBarItem = UITabBarItem(
+            title: "Cities",
+            image: UIImage(systemName: "plus.circle"),
+            tag: 1
+        )
+        
+        citiesVC.onCitySelected = { [weak self] weatherInfo in
+                    self?.handleCitySelection(weatherInfo)
+                }
         // აქ დაამატეთ თქვენი ფეიჯი
         
-        setViewControllers([homeVC, forecastVC], animated: true) // აქ თანმიმდევრობის მიხედვით ჩაამატეთ თქვენი ფეიჯი
+        setViewControllers([homeVC, forecastVC, citiesVC], animated: true) // აქ თანმიმდევრობის მიხედვით ჩაამატეთ თქვენი ფეიჯი
     }
+    
+    private func handleCitySelection(_ weatherInfo: WeatherFirstInfo) {
+            // Update HomeViewController
+            homeVC.loadWeather(lat: weatherInfo.lat, lon: weatherInfo.lon)
+            
+            // Update ForecastViewController
+            forecastVC.loadWeather(lat: weatherInfo.lat, lon: weatherInfo.lon)
+            
+            // Switch to Home tab
+            selectedIndex = 0 // Home is at index 0
+        }
 }

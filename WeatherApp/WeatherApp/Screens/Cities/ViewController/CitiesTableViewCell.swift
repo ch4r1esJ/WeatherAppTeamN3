@@ -90,16 +90,21 @@ class CitiesTableViewCell: UITableViewCell {
     }
     
     private func setupInitialStyles() {
-            self.backgroundColor = .clear
-            self.selectionStyle = .none
-            contentView.backgroundColor = .clear
-            
+        self.backgroundColor = .clear
+        self.selectionStyle = .none
+        contentView.backgroundColor = .clear
+        
         layer.shadowColor = UIColor(red: 0/255, green: 16/255, blue: 38/255, alpha: 1).cgColor
-            layer.shadowOpacity = 0.9
-            layer.shadowOffset = CGSize(width: 0, height: 4)
-            layer.shadowRadius = 16
-            layer.masksToBounds = false
-        }
+        layer.shadowOpacity = 0.9
+        layer.shadowOffset = CGSize(width: 0, height: 4)
+        layer.shadowRadius = 16
+        layer.masksToBounds = false
+    }
+    
+    func configure(with weatherInfo: WeatherFirstInfo) {
+        cityLabel.text = weatherInfo.name
+        temperatureLabel.text = "\(Int(weatherInfo.temp))º"
+    }
     
 }
 #Preview {
