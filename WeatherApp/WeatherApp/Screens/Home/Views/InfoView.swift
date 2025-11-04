@@ -14,17 +14,17 @@ class InfoView: UIView {
     private let temperatureLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: 64, weight: .bold    )
+        label.font = UIFont.systemFont(ofSize: 80, weight: .bold    )
         label.textColor = .white
         label.textAlignment = .center
-        label.text = "24"
+        label.text = "24ºC"
         return label
     }()
     
     private let precipitationsLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: 17, weight: .medium)
+        label.font = UIFont.systemFont(ofSize: 19, weight: .medium)
         label.text = "Precipitations"
         label.textAlignment = .center
         label.textColor = .white
@@ -34,10 +34,10 @@ class InfoView: UIView {
     private let maxMinLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: 17, weight: .medium)
+        label.font = UIFont.systemFont(ofSize: 19, weight: .medium)
         label.textAlignment = .center
         label.textColor = .white
-        label.text = "Max.: 25° Min.: 12°"
+        label.text = "Max.: 25º Min.: 12º"
         return label
     }()
     
@@ -63,10 +63,10 @@ class InfoView: UIView {
         
         NSLayoutConstraint.activate([
             temperatureLabel.topAnchor.constraint(equalTo: topAnchor, constant: 1),
-            temperatureLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
+            temperatureLabel.centerXAnchor.constraint(equalTo: centerXAnchor, constant: 15),
             
             precipitationsLabel.topAnchor.constraint(equalTo: temperatureLabel.bottomAnchor, constant: 8),
-            precipitationsLabel.centerXAnchor.constraint(equalTo: temperatureLabel.centerXAnchor),
+            precipitationsLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
             
             maxMinLabel.topAnchor.constraint(equalTo: precipitationsLabel.bottomAnchor, constant: 8),
             maxMinLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
@@ -78,7 +78,7 @@ class InfoView: UIView {
     
     func configure(temperature: String, max: String, min: String) {
         temperatureLabel.text = temperature
-        maxMinLabel.text = "Max.: \(max)° Min.: \(min)°"
+        maxMinLabel.text = "Max.: \(max)º Min.: \(min)º"
     }
 }
 
