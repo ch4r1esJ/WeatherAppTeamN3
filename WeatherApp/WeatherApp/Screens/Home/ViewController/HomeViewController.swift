@@ -14,19 +14,67 @@ class HomeViewController: UIViewController {
     private let locationView = LocationView()
     private let infoView = InfoView()
     private let homeViewModel = HomeViewModel()
+    
+    private let todaySectionView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .clear
+        return view
+    }()
+    
+    private let todayLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "TODAY"
+        label.font = .systemFont(ofSize: 13, weight: .semibold)
+        label.textColor = .white.withAlphaComponent(0.7)
+        return label
+    }()
+    
+    private let detailsButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Details", for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 15, weight: .regular)
+        button.setTitleColor(.white, for: .normal)
+        
+        let config = UIImage.SymbolConfiguration(pointSize: 13, weight: .medium)
+        let image = UIImage(systemName: "chevron.right", withConfiguration: config)
+        button.setImage(image, for: .normal)
+        button.tintColor = .white
+        button.semanticContentAttribute = .forceRightToLeft
+        
+        return button
+    }()
+    
+    private let forecastContainer: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .clear
+        
+        // Shadow on container
+        view.layer.shadowColor = UIColor.black.cgColor
+        view.layer.shadowOpacity = 0.4
+        view.layer.shadowOffset = CGSize(width: 0, height: 12)
+        view.layer.shadowRadius = 24
+        
+        return view
+    }()
         
     private let forecastList: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
-        layout.minimumLineSpacing = 12
+        layout.minimumLineSpacing = 5
         layout.sectionInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-        layout.itemSize = CGSize(width: 70, height: 130)
+        layout.itemSize = CGSize(width: 80, height: 140)
 
         let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        view.backgroundColor = UIColor.systemCyan.withAlphaComponent(0.3)
+        view.backgroundColor = UIColor(red: 8/255, green: 36/255, blue: 79/255, alpha: 0.25)
         view.layer.cornerRadius = 20
+        view.clipsToBounds = true
         view.showsHorizontalScrollIndicator = false
         view.translatesAutoresizingMaskIntoConstraints = false
+        
         return view
     }()
     
@@ -37,20 +85,6 @@ class HomeViewController: UIViewController {
         return imageView
     }()
     
-    private let titleLabel = UILabel.make(text: "Recommendations", fontSize: 16, weight: .light, color: .black)
-    
-    private let arrowButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        
-        let config = UIImage.SymbolConfiguration(pointSize: 20, weight: .light)
-        let image = UIImage(systemName: "arrow.right", withConfiguration: config)
-        button.setImage(image, for: .normal)
-        button.tintColor = .black
-        
-        return button
-    }()
-    
     // MARK: - Life Cycle
     
     override func viewDidLoad() {
@@ -59,6 +93,7 @@ class HomeViewController: UIViewController {
         setupView()
         registerCell()
         configure()
+        setupActions()
         homeViewModel.loadWeather(for: "Tbilisi")
         
         homeViewModel.onWeatherLoaded = { [weak self] _ in
@@ -67,6 +102,7 @@ class HomeViewController: UIViewController {
                     self?.forecastList.reloadData()
                 }
             }
+        }
     }
     
     // MARK: - Methods
@@ -85,9 +121,12 @@ class HomeViewController: UIViewController {
     private func setupView() {
         view.addSubview(locationView)
         view.addSubview(infoView)
-        view.addSubview(forecastList)
-        view.addSubview(titleLabel)
-        view.addSubview(arrowButton)
+        view.addSubview(todaySectionView)
+        view.addSubview(forecastContainer)
+        forecastContainer.addSubview(forecastList)
+        
+        todaySectionView.addSubview(todayLabel)
+        todaySectionView.addSubview(detailsButton)
         
         [locationView, infoView, forecastList].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
@@ -101,26 +140,45 @@ class HomeViewController: UIViewController {
             infoView.topAnchor.constraint(equalTo: locationView.bottomAnchor),
             infoView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             infoView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            
+            todaySectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            todaySectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -30),
+            todaySectionView.topAnchor.constraint(equalTo: infoView.bottomAnchor, constant: 30),
+            todaySectionView.heightAnchor.constraint(equalToConstant: 24),
+            
+            todayLabel.leadingAnchor.constraint(equalTo: todaySectionView.leadingAnchor, constant: 20),
+            todayLabel.centerYAnchor.constraint(equalTo: todaySectionView.centerYAnchor),
+            
+            detailsButton.trailingAnchor.constraint(equalTo: todaySectionView.trailingAnchor),
+            detailsButton.centerYAnchor.constraint(equalTo: todaySectionView.centerYAnchor),
+            detailsButton.heightAnchor.constraint(equalToConstant: 32),
 
-            forecastList.leadingAnchor.constraint(equalTo: infoView.leadingAnchor),
-            forecastList.trailingAnchor.constraint(equalTo: infoView.trailingAnchor),
-            forecastList.topAnchor.constraint(equalTo: infoView.bottomAnchor, constant: 60),
-            forecastList.heightAnchor.constraint(equalToConstant: 150),
-            
-            titleLabel.centerYAnchor.constraint(equalTo: arrowButton.centerYAnchor),
-            titleLabel.trailingAnchor.constraint(equalTo: arrowButton.leadingAnchor, constant: -5),
-            
-            arrowButton.topAnchor.constraint(equalTo: forecastList.bottomAnchor, constant: 10),
-            arrowButton.trailingAnchor.constraint(equalTo: forecastList.trailingAnchor),
-            arrowButton.widthAnchor.constraint(equalToConstant: 44),
-            arrowButton.heightAnchor.constraint(equalToConstant: 44),
+            forecastContainer.leadingAnchor.constraint(equalTo: infoView.leadingAnchor),
+            forecastContainer.trailingAnchor.constraint(equalTo: infoView.trailingAnchor),
+            forecastContainer.topAnchor.constraint(equalTo: infoView.bottomAnchor, constant: 60),
+            forecastContainer.heightAnchor.constraint(equalToConstant: 150),
+
+            forecastList.topAnchor.constraint(equalTo: forecastContainer.topAnchor),
+            forecastList.leadingAnchor.constraint(equalTo: forecastContainer.leadingAnchor),
+            forecastList.trailingAnchor.constraint(equalTo: forecastContainer.trailingAnchor),
+            forecastList.bottomAnchor.constraint(equalTo: forecastContainer.bottomAnchor),
         ])
     }
     
-    func configure() {
-        locationView.configure(city: homeViewModel.cityName)
-        infoView.configure(temperature: homeViewModel.temperature, max: homeViewModel.max, min: homeViewModel.min)
+    private func setupActions() {
+        detailsButton.addTarget(self, action: #selector(detailsButtonTapped), for: .touchUpInside)
     }
+    
+    @objc private func detailsButtonTapped() {
+    }
+    
+    func configure() {
+        locationView.configure(city: homeViewModel.cityName, image: homeViewModel.weatherIconImage(), )
+        infoView.configure(temperature: homeViewModel.temperature, max: homeViewModel.max, min: homeViewModel.min)
+        self.backgroundImage.image = homeViewModel.backgroundImage()
+    }
+    
+    
 }
 
 extension HomeViewController: UICollectionViewDataSource {

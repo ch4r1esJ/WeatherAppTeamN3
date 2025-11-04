@@ -10,24 +10,49 @@ import UIKit
 class HomeCell: UICollectionViewCell {
     // MARK: - Properties
     
-    private let temperatureLabel = UILabel.make(text: "29°C", fontSize: 15, weight: .medium, color: .white)
+    private let containerView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = UIColor(red: 50/255, green: 120/255, blue: 200/255, alpha: 0.1)
+        view.layer.cornerRadius = 25
+        view.layer.cornerCurve = .continuous
+        view.layer.borderWidth = 0.5
+        view.layer.borderColor = UIColor.white.withAlphaComponent(0.3).cgColor
+        return view
+    }()
+    
+    private let timeLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = .systemFont(ofSize: 15, weight: .medium)
+        label.textColor = .white.withAlphaComponent(0.9)
+        label.textAlignment = .center
+        return label
+    }()
     
     private let weatherIcon: UIImageView = {
         let imageView = UIImageView()
-        imageView.clipsToBounds = true
-        imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.image = UIImage(named: "cloudIcon")
+        imageView.contentMode = .scaleAspectFit
+        imageView.clipsToBounds = true
         return imageView
     }()
     
-    private let timeLabel = UILabel.make(text: "15:00", fontSize: 15, weight: .regular, color: .white)
+    private let temperatureLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = .systemFont(ofSize: 20, weight: .semibold)
+        label.textColor = .white
+        label.textAlignment = .center
+        return label
+    }()
 
     // MARK: - Init
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
+        setupStyle()
     }
     
     required init?(coder: NSCoder) {
@@ -39,32 +64,51 @@ class HomeCell: UICollectionViewCell {
     private func setupView() {
         backgroundColor = .clear
         contentView.backgroundColor = .clear
-        
-        contentView.addSubview(temperatureLabel)
-        contentView.addSubview(weatherIcon)
-        contentView.addSubview(timeLabel)
+        contentView.addSubview(containerView)
+        containerView.addSubview(timeLabel)
+        containerView.addSubview(weatherIcon)
+        containerView.addSubview(temperatureLabel)
         
         NSLayoutConstraint.activate([
-            temperatureLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12),
-            temperatureLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-
-            weatherIcon.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            weatherIcon.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            weatherIcon.widthAnchor.constraint(equalToConstant: 44),
-            weatherIcon.heightAnchor.constraint(equalToConstant: 44),
-
-            timeLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12),
-            timeLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor)
+            containerView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 6),
+            containerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 6),
+            containerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -6),
+            containerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -6),
+            
+            timeLabel.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 14),
+            timeLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 8),
+            timeLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -8),
+            
+            weatherIcon.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
+            weatherIcon.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
+            weatherIcon.widthAnchor.constraint(equalToConstant: 42),
+            weatherIcon.heightAnchor.constraint(equalToConstant: 42),
+            
+            temperatureLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -14),
+            temperatureLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 8),
+            temperatureLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -8)
         ])
+    }
+    
+    private func setupStyle() {
+        layer.shadowColor = UIColor.black.cgColor
+        layer.shadowOpacity = 0.15
+        layer.shadowOffset = CGSize(width: 0, height: 4)
+        layer.shadowRadius = 12
+        layer.masksToBounds = false
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        layer.shadowPath = UIBezierPath(
+            roundedRect: containerView.frame,
+            cornerRadius: 22
+        ).cgPath
     }
         
     func configure(temperature: String, icon: UIImage?, time: String) {
         temperatureLabel.text = temperature
-        weatherIcon.image = icon
         timeLabel.text = time
+        weatherIcon.image = icon
     }
-}
-
-#Preview {
-    HomeCell()
 }

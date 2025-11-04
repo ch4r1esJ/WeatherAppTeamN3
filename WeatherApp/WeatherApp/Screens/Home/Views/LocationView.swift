@@ -42,7 +42,7 @@ class LocationView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - Setup
+    // MARK: - Methods
     
     private func setupView() {
         backgroundColor = .clear
@@ -68,10 +68,9 @@ class LocationView: UIView {
         ])
     }
     
-    // MARK: - Configuration
-    
-    func configure(city: String) {
+    func configure(city: String, image: UIImage?) {
         cityName.text = city
+        weatherImage.image = image
     }
 }
 
