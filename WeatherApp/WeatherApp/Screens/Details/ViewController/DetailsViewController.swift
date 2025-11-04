@@ -16,6 +16,30 @@ class DetailsViewController: UIViewController, UITableViewDataSource {
     private let backgroundImageView = UIImageView()
     private let mapPinIcon = UIImageView()
     
+    private let recommendationsLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Recommendations"
+        label.font = .boldSystemFont(ofSize: 16)
+        label.textColor = .white
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    private let arrowButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        let config = UIImage.SymbolConfiguration(pointSize: 20, weight: .light)
+        let image = UIImage(systemName: "arrow.right", withConfiguration: config)
+        button.setImage(image, for: .normal)
+        button.tintColor = .white
+        button.contentMode = .scaleAspectFit
+        
+        button.addTarget(nil, action: #selector(recommendationsTapped), for: .touchUpInside)
+        
+        return button
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -40,6 +64,7 @@ class DetailsViewController: UIViewController, UITableViewDataSource {
         mapPinIcon.translatesAutoresizingMaskIntoConstraints = false
         mapPinIcon.widthAnchor.constraint(equalToConstant: 22).isActive = true
         mapPinIcon.heightAnchor.constraint(equalToConstant: 22).isActive = true
+        mapPinIcon.tintColor = .white
         
         cityLabel.text = viewModel.cityName
         cityLabel.font = .boldSystemFont(ofSize: 20)
@@ -58,13 +83,23 @@ class DetailsViewController: UIViewController, UITableViewDataSource {
         
         view.addSubview(cityStack)
         view.addSubview(weatherIcon)
+        view.addSubview(recommendationsLabel)
+        view.addSubview(arrowButton)
         
         NSLayoutConstraint.activate([
             cityStack.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
             cityStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             
+            arrowButton.centerYAnchor.constraint(equalTo: cityStack.centerYAnchor),
+            arrowButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            arrowButton.widthAnchor.constraint(equalToConstant: 44),
+            arrowButton.heightAnchor.constraint(equalToConstant: 44),
+            
+            recommendationsLabel.centerYAnchor.constraint(equalTo: cityStack.centerYAnchor),
+            recommendationsLabel.trailingAnchor.constraint(equalTo: arrowButton.leadingAnchor, constant: -5),
+            
             weatherIcon.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            weatherIcon.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
+            weatherIcon.topAnchor.constraint(equalTo: cityStack.bottomAnchor, constant: 40),
             weatherIcon.heightAnchor.constraint(equalToConstant: 150),
             weatherIcon.widthAnchor.constraint(equalToConstant: 150)
         ])
@@ -82,6 +117,12 @@ class DetailsViewController: UIViewController, UITableViewDataSource {
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
+    }
+    
+    // MARK: recommendations ფეიჯზე გადასასვლელი
+    @objc private func recommendationsTapped() {
+         //let vc = HomeViewController()
+        // navigationController?.pushViewController(vc, animated: true)
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
