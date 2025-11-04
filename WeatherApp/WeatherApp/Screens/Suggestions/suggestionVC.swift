@@ -70,7 +70,7 @@ class suggestionVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         configureConstraints()
         bindViewModel()
         
-        viewModel.loadWeather(for: "Tbilisi")
+        viewModel.loadWeather(for: "Tsqaltubo")
     }
     
     private func setupUI() {

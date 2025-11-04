@@ -126,11 +126,11 @@ class ForecastViewController: UIViewController {
     
     private func refreshUIWithViewModel() {
         DispatchQueue.main.async {
-            self.tableView.reloadData()
+            self.cityView.configure(city: self.viewModel.currentCityName,
+            weatherIcon: self.viewModel.weatherIconImage())
             self.backgroundImageView.image = self.viewModel.backgroundImage()
             self.weatherImageView.image = self.viewModel.weatherIconImage()
-            self.cityView.configure(city: self.viewModel.cityName,
-            weatherIcon: self.viewModel.weatherIconImage())
+            self.tableView.reloadData()
         }
     }
     // MARK: დავამატე ლოკაციით ინფოს ჩამოტვირტვა
