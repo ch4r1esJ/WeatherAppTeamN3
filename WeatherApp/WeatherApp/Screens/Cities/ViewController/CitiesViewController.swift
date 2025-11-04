@@ -16,7 +16,7 @@ class CitiesViewController: UIViewController {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFill
         imageView.image = .defaultBackground
-
+        
         return imageView
     }()
     
@@ -102,20 +102,20 @@ class CitiesViewController: UIViewController {
             backgroundImageView.leftAnchor.constraint(equalTo: view.leftAnchor),
             backgroundImageView.rightAnchor.constraint(equalTo: view.rightAnchor),
             backgroundImageView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-
+            
             searchTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             searchTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: ScreenSize.width * (20 / 402)),
             searchTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: ScreenSize.width * (-20 / 402)),
             searchTextField.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 25 / 402),
-
+            
             addButton.topAnchor.constraint(equalTo: searchTextField.bottomAnchor, constant: ScreenSize.height * (10 / 874)),
             addButton.trailingAnchor.constraint(equalTo: searchTextField.trailingAnchor, constant: 0),
             addButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 100 / 404),
             addButton.heightAnchor.constraint(equalTo: view.widthAnchor, multiplier: 35 / 404),
             
             citiesTableView.topAnchor.constraint(equalTo: addButton.bottomAnchor, constant: ScreenSize.height * (10 / 874)),
-            citiesTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0 /*ScreenSize.width * (20 / 402)*/),
-            citiesTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0/*ScreenSize.width * (-20 / 402)*/),
+            citiesTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
+            citiesTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
             citiesTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
@@ -128,12 +128,12 @@ class CitiesViewController: UIViewController {
     }
     
     private func bindViewModel() {
-         viewModel.onCitiesUpdated = { [weak self] in
-             DispatchQueue.main.async {
-                 self?.citiesTableView.reloadData()
-             }
-         }
-     }
+        viewModel.onCitiesUpdated = { [weak self] in
+            DispatchQueue.main.async {
+                self?.citiesTableView.reloadData()
+            }
+        }
+    }
     
     private func setupButtonAction() {
         let action = UIAction { [weak self] _ in
@@ -157,7 +157,6 @@ class CitiesViewController: UIViewController {
 }
 
 
-// TODO: შესაცლელია
 extension CitiesViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         viewModel.citiesCount
@@ -174,12 +173,23 @@ extension CitiesViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-           tableView.deselectRow(at: indexPath, animated: true)
-           
-           guard let city = viewModel.getCity(at: indexPath.row) else { return }
-           
-           onCitySelected?(city)
-       }
+        tableView.deselectRow(at: indexPath, animated: true)
+        
+        guard let city = viewModel.getCity(at: indexPath.row) else { return }
+        let bg = viewModel.backgroundImage(for: city)
+        backgroundImageView.image = bg
+        onCitySelected?(city)
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            viewModel.removeCity(at: indexPath.row)
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, titleForDeleteConfirmationButtonForRowAt indexPath: IndexPath) -> String? {
+        return "Delete"
+    }
 }
 
 #Preview {

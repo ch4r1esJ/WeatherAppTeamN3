@@ -97,9 +97,10 @@ class HomeViewController: UIViewController {
         homeViewModel.loadWeather(for: "Tbilisi")
         
         homeViewModel.onWeatherLoaded = { [weak self] _ in
-            DispatchQueue.main.async {
-                self?.configure()
-                self?.forecastList.reloadData()
+                DispatchQueue.main.async {
+                    self?.configure()
+                    self?.forecastList.reloadData()
+                }
             }
         }
     }
