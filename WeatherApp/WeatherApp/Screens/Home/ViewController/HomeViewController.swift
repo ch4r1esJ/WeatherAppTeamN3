@@ -52,7 +52,6 @@ class HomeViewController: UIViewController {
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = .clear
         
-        // Shadow on container
         view.layer.shadowColor = UIColor.black.cgColor
         view.layer.shadowOpacity = 0.4
         view.layer.shadowOffset = CGSize(width: 0, height: 12)
@@ -60,14 +59,14 @@ class HomeViewController: UIViewController {
         
         return view
     }()
-        
+    
     private let forecastList: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.minimumLineSpacing = 5
         layout.sectionInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         layout.itemSize = CGSize(width: 80, height: 140)
-
+        
         let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
         view.backgroundColor = UIColor(red: 8/255, green: 36/255, blue: 79/255, alpha: 0.25)
         view.layer.cornerRadius = 20
@@ -94,7 +93,7 @@ class HomeViewController: UIViewController {
         registerCell()
         configure()
         setupActions()
-        homeViewModel.loadWeather(for: "Tbilisi")
+        homeViewModel.loadWeather(lat: 43.151, lon: 42.271)
         
         homeViewModel.onWeatherLoaded = { [weak self] _ in
             DispatchQueue.main.async {
@@ -151,12 +150,12 @@ class HomeViewController: UIViewController {
             detailsButton.trailingAnchor.constraint(equalTo: todaySectionView.trailingAnchor),
             detailsButton.centerYAnchor.constraint(equalTo: todaySectionView.centerYAnchor),
             detailsButton.heightAnchor.constraint(equalToConstant: 32),
-
+            
             forecastContainer.leadingAnchor.constraint(equalTo: infoView.leadingAnchor),
             forecastContainer.trailingAnchor.constraint(equalTo: infoView.trailingAnchor),
             forecastContainer.topAnchor.constraint(equalTo: infoView.bottomAnchor, constant: 60),
             forecastContainer.heightAnchor.constraint(equalToConstant: 150),
-
+            
             forecastList.topAnchor.constraint(equalTo: forecastContainer.topAnchor),
             forecastList.leadingAnchor.constraint(equalTo: forecastContainer.leadingAnchor),
             forecastList.trailingAnchor.constraint(equalTo: forecastContainer.trailingAnchor),
@@ -177,21 +176,20 @@ class HomeViewController: UIViewController {
         self.backgroundImage.image = homeViewModel.backgroundImage()
     }
     
-    
 }
 
 extension HomeViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return homeViewModel.numberOfForecastItems()
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "HomeCell", for: indexPath) as? HomeCell else {
             return UICollectionViewCell()
         }
         
-        let forecast = homeViewModel.forecastItem(at: indexPath.row)
-            cell.configure(temperature: forecast.temperature, icon: forecast.icon, time: forecast.time)
+        let forecast = homeViewModel.forecastIcon(at: indexPath.row)
+        cell.configure(temperature: forecast.temperature, iconURL: forecast.iconURL, time: forecast.time)
         
         return cell
     }
@@ -201,9 +199,7 @@ extension HomeViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
     }
     
-    
-    // MARK: დავამატე ლოკაციით ინფოს ჩამოტვირთვა
     func loadWeather(lat: Double, lon: Double) {
-         homeViewModel.loadWeather(lat: lat, lon: lon)
-     }
+        homeViewModel.loadWeather(lat: lat, lon: lon)
+    }
 }
