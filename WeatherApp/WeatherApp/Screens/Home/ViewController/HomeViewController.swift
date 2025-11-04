@@ -63,7 +63,7 @@ class HomeViewController: UIViewController {
         
         homeViewModel.onWeatherLoaded = { [weak self] _ in
                 DispatchQueue.main.async {
-                    self?.configure() // Now update UI with real data
+                    self?.configure()
                     self?.forecastList.reloadData()
                 }
             }
