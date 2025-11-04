@@ -114,5 +114,6 @@ struct Rain: Decodable {
 struct City: Decodable {
     let id: Int
     let name: String
+    let coord: Coordinates
     let country: String
 }

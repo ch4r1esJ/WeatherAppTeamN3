@@ -8,13 +8,16 @@
 import UIKit
 
 class DetailsViewController: UIViewController, UITableViewDataSource {
-
+    
     private let viewModel = DetailsViewModel()
     private let tableView = UITableView()
     private let cityLabel = UILabel()
     private let weatherIcon = UIImageView()
     private let backgroundImageView = UIImageView()
     private let mapPinIcon = UIImageView()
+    
+    var lon: Double = 0
+    var lat: Double = 0
 
     override func viewDidLoad() {
         super.viewDidLoad()

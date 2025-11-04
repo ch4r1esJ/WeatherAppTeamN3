@@ -4,9 +4,9 @@
 //
 //  Created by Charles Janjgava on 11/2/25.
 //
- 
+
 import UIKit
- 
+
 class HomeViewController: UIViewController {
     
     // MARK: - Properties
@@ -59,14 +59,14 @@ class HomeViewController: UIViewController {
         
         return view
     }()
-        
+    
     private let forecastList: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.minimumLineSpacing = 5
         layout.sectionInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         layout.itemSize = CGSize(width: 80, height: 140)
- 
+        
         let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
         view.backgroundColor = UIColor(red: 8/255, green: 36/255, blue: 79/255, alpha: 0.25)
         view.layer.cornerRadius = 20
@@ -150,12 +150,12 @@ class HomeViewController: UIViewController {
             detailsButton.trailingAnchor.constraint(equalTo: todaySectionView.trailingAnchor),
             detailsButton.centerYAnchor.constraint(equalTo: todaySectionView.centerYAnchor),
             detailsButton.heightAnchor.constraint(equalToConstant: 32),
- 
+            
             forecastContainer.leadingAnchor.constraint(equalTo: infoView.leadingAnchor),
             forecastContainer.trailingAnchor.constraint(equalTo: infoView.trailingAnchor),
             forecastContainer.topAnchor.constraint(equalTo: infoView.bottomAnchor, constant: 60),
             forecastContainer.heightAnchor.constraint(equalToConstant: 150),
- 
+            
             forecastList.topAnchor.constraint(equalTo: forecastContainer.topAnchor),
             forecastList.leadingAnchor.constraint(equalTo: forecastContainer.leadingAnchor),
             forecastList.trailingAnchor.constraint(equalTo: forecastContainer.trailingAnchor),
@@ -164,43 +164,50 @@ class HomeViewController: UIViewController {
     }
     
     private func setupActions() {
-        detailsButton.addTarget(self, action: #selector(detailsButtonTapped), for: .touchUpInside)
+        detailsButton.addAction(UIAction { [weak self] _ in
+            guard let self = self,
+                  let coord = self.homeViewModel.weatherResponse?.city.coord else { return }
+            let detailsVC = DetailsViewController()
+            detailsVC.lat = coord.lat
+            detailsVC.lon = coord.lon
+            self.present(detailsVC, animated: true)
+        }, for: .touchUpInside)
     }
     
-    @objc private func detailsButtonTapped() {
-    }
+//    @objc private func detailsButtonTapped() {
+//    }
     
     func configure() {
         locationView.configure(city: homeViewModel.cityName, image: homeViewModel.weatherIconImage(), )
         infoView.configure(temperature: homeViewModel.temperature, max: homeViewModel.max, min: homeViewModel.min)
         self.backgroundImage.image = homeViewModel.backgroundImage()
     }
- 
+    
 }
- 
+
 extension HomeViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return homeViewModel.numberOfForecastItems()
     }
- 
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "HomeCell", for: indexPath) as? HomeCell else {
             return UICollectionViewCell()
         }
         
         let forecast = homeViewModel.forecastIcon(at: indexPath.row)
-                cell.configure(temperature: forecast.temperature, iconURL: forecast.iconURL, time: forecast.time)
+        cell.configure(temperature: forecast.temperature, iconURL: forecast.iconURL, time: forecast.time)
         
         return cell
     }
 }
- 
+
 extension HomeViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
     }
     
     func loadWeather(lat: Double, lon: Double) {
-         homeViewModel.loadWeather(lat: lat, lon: lon)
-     }
+        homeViewModel.loadWeather(lat: lat, lon: lon)
+    }
 }
- 
+
