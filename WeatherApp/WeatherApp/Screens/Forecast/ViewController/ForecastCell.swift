@@ -69,7 +69,7 @@ import Foundation
         contentView.backgroundColor = .clear
         
         layer.shadowColor = UIColor(red: 0/255, green: 16/255, blue: 38/255, alpha: 1).cgColor
-        layer.shadowOpacity = 0.99
+        layer.shadowOpacity = 0.50
         layer.shadowOffset = CGSize(width: 0, height: 4)
         layer.shadowRadius = 16
         layer.masksToBounds = false
@@ -133,3 +133,4 @@ import Foundation
         }.resume()
     }
 }
+

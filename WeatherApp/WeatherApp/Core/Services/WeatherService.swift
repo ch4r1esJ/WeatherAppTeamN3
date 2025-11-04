@@ -16,6 +16,28 @@ class WeatherService {
     init(networkManager: NetworkManager = NetworkManager()) {
         self.networkManager = networkManager
     }
+    // es axla davamate
+    func getFirstInfo(for cityName: String, completion: @escaping (Result<WeatherFirstInfo, Error>) -> Void) {
+        let url = "https://api.openweathermap.org/data/2.5/weather?q=\(cityName)&appid=390b1c9d792d64568df3ea91ce636c59&units=metric"
+        
+        networkManager.getData(url: url) { (result: Result<WeatherInfo, Error>) in
+            switch result {
+            case .success(let weather):
+                let info = WeatherFirstInfo(
+                    name: weather.name,
+                    temp: weather.main.temp,
+                    lat: weather.coord.lat,
+                    lon: weather.coord.lon
+                )
+                completion(.success(info))
+                
+            case .failure(let error):
+                print("Failed to get coordinates: \(error.localizedDescription)")
+                completion(.failure(error))
+            }
+        }
+    }
+
     
     func getCoordinates(for cityName: String, completion: @escaping (Double, Double) -> ()) {
         let url = "https://api.openweathermap.org/data/2.5/weather?q=\(cityName)&appid=390b1c9d792d64568df3ea91ce636c59&units=metric"

@@ -200,4 +200,10 @@ extension HomeViewController: UICollectionViewDataSource {
 extension HomeViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
     }
+    
+    
+    // MARK: დავამატე ლოკაციით ინფოს ჩამოტვირთვა
+    func loadWeather(lat: Double, lon: Double) {
+         homeViewModel.loadWeather(lat: lat, lon: lon)
+     }
 }
