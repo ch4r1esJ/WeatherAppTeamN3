@@ -10,10 +10,8 @@ import UIKit
 
 class DetailsViewModel {
     
-    private let weatherService = WeatherService()
-    
-    var cityName: String = ""
-    var iconName: String = "sunIcon"
+    var cityName: String = "Tsqaltubo"
+    var iconName: String = "heavyrainIcon"
     var details: [WeatherDetail] = []
     var currentTemp: Double = 0.0
     

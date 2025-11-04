@@ -79,7 +79,3 @@ class InfoView: UIView {
         maxMinLabel.text = "Max.: \(max)º Min.: \(min)º"
     }
 }
-
-#Preview {
-    InfoView()
-}
