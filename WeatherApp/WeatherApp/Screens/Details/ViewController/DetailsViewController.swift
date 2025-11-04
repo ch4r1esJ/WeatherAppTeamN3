@@ -22,7 +22,7 @@ class DetailsViewController: UIViewController, UITableViewDataSource {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        viewModel.loadMockData()
+        loadWeatherDetails()
     }
 
     private func setupUI() {
@@ -44,7 +44,6 @@ class DetailsViewController: UIViewController, UITableViewDataSource {
         mapPinIcon.widthAnchor.constraint(equalToConstant: 22).isActive = true
         mapPinIcon.heightAnchor.constraint(equalToConstant: 22).isActive = true
 
-        cityLabel.text = viewModel.cityName
         cityLabel.font = .boldSystemFont(ofSize: 20)
         cityLabel.textColor = .white
         cityLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -55,7 +54,6 @@ class DetailsViewController: UIViewController, UITableViewDataSource {
         cityStack.alignment = .center
         cityStack.translatesAutoresizingMaskIntoConstraints = false
 
-        weatherIcon.image = UIImage(named: viewModel.iconName)
         weatherIcon.contentMode = .scaleAspectFit
         weatherIcon.translatesAutoresizingMaskIntoConstraints = false
 
@@ -67,7 +65,7 @@ class DetailsViewController: UIViewController, UITableViewDataSource {
             cityStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
 
             weatherIcon.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            weatherIcon.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
+            weatherIcon.topAnchor.constraint(equalTo: cityStack.bottomAnchor, constant: 40),
             weatherIcon.heightAnchor.constraint(equalToConstant: 150),
             weatherIcon.widthAnchor.constraint(equalToConstant: 150)
         ])
@@ -85,6 +83,18 @@ class DetailsViewController: UIViewController, UITableViewDataSource {
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
+    }
+
+    private func loadWeatherDetails() {
+        viewModel.loadWeatherDetails(lat: lat, lon: lon) { [weak self] in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                self.cityLabel.text = self.viewModel.cityName
+                self.weatherIcon.image = UIImage(named: self.viewModel.iconName)
+                self.backgroundImageView.image = self.viewModel.backgroundImage(for: self.viewModel.currentTemp)
+                self.tableView.reloadData()
+            }
+        }
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
