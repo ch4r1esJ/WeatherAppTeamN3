@@ -87,7 +87,7 @@ class HomeViewController: UIViewController {
         registerCell()
         configure()
         setupActions()
-        homeViewModel.loadWeather(lat: 42.3993, lon: 42.5491)
+//        homeViewModel.loadWeather(lat: 42.3993, lon: 42.5491)
         homeViewModel.onWeatherLoaded = { [weak self] _ in
             DispatchQueue.main.async {
                 self?.configure()

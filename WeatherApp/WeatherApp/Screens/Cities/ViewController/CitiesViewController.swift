@@ -134,15 +134,28 @@ class CitiesViewController: UIViewController {
                   !cityName.isEmpty else {
                 return
             }
+            
             self.viewModel.addCity(cityName) { success in
                 DispatchQueue.main.async {
                     if success {
                         self.searchTextField.text = ""
+                    } else {
+                        self.showDuplicateAlert(for: cityName)
                     }
                 }
             }
         }
         addButton.addAction(action, for: .touchUpInside)
+    }
+
+    private func showDuplicateAlert(for cityName: String) {
+        let alert = UIAlertController(
+            title: "City Already Added",
+            message: "'\(cityName)' is already in your list.",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
     }
 }
 

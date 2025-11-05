@@ -72,7 +72,7 @@ class SuggestionViewController: UIViewController, UITableViewDataSource, UITable
         setupUI()
         configureConstraints()
         bindViewModel()
-        viewModel.loadWeather(for: "Tsqaltubo")
+//        viewModel.loadWeather(for: "Tsqaltubo")
     }
     
     // MARK: Methods

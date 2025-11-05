@@ -116,7 +116,7 @@ struct City: Decodable {
     let country: String
 }
 
-struct WeatherFirstInfo {
+struct WeatherFirstInfo: Codable {
     let name: String
     let temp: Double
     let lat: Double

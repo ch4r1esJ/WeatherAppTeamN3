@@ -12,6 +12,8 @@ import UIKit
 class ForecastViewModel {
     // MARK: Properties
     
+    let weatherService = WeatherService()
+    
     private(set) var items: [ForecastItem] = [] {
         didSet { onUpdate?() }
     }
@@ -44,15 +46,22 @@ class ForecastViewModel {
     
     // MARK: Methods
     
-    func loadForecast(
-        lat: Double = 42.3993,
-        lon: Double = 42.5491
-    ) {
-        service.loadWeatherForcast(lat: lat, lon: lon) { [weak self] weatherResponse in
-            guard let self else { return }
-            self.processResponse(weatherResponse)
+    func loadForecast(lat: Double, lon: Double) {
+        weatherService.loadWeatherForcast(lat: lat, lon: lon) { [weak self] response in
+            guard let self = self else { return }
+            self.processResponse(response) 
         }
     }
+    
+//    func loadForecast(
+//        lat: Double = 42.3993,
+//        lon: Double = 42.5491
+//    ) {
+//        service.loadWeatherForcast(lat: lat, lon: lon) { [weak self] weatherResponse in
+//            guard let self else { return }
+//            self.processResponse(weatherResponse)
+//        }
+//    }
     
     func updateForecast(for cityName: String) {
         service.loadWeatherForCity(cityName) { [weak self] response in
