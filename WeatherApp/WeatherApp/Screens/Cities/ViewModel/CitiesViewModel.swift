@@ -1,16 +1,16 @@
 //
-//  Untitled.swift
+//  CitiesViewModel.swift
 //  WeatherApp
 //
 //  Created by Gegi Ghvachliani on 03.11.25.
 //
-//
 
-import UIKit
+import Foundation
 
 class CitiesViewModel {
-    // MARK: Properties
     private let citiesKey = "cities"
+    private let weatherService: WeatherService
+    private let displayService = WeatherDisplayService()
     
     private(set) var cities: [WeatherFirstInfo] = [] {
         didSet {
@@ -19,68 +19,34 @@ class CitiesViewModel {
         }
     }
     
-    private let weatherService: WeatherService
     var onCitiesUpdated: (() -> Void)?
+    
     var citiesCount: Int {
         cities.count
     }
-    
-    // MARK: Initialization
     
     init(weatherService: WeatherService = WeatherService()) {
         self.weatherService = weatherService
         loadCities()
     }
     
-    // MARK: Methods
-    
-    private func saveCities() {
-        do {
-            let encoder = JSONEncoder()
-            let data = try encoder.encode(cities)
-            UserDefaults.standard.set(data, forKey: citiesKey)
-        } catch {
-            print(error)
-        }
+    func backgroundAssetName(for city: WeatherFirstInfo) -> String {
+        let display = displayService.getDisplay(iconCode: "01d", temperature: city.temp)
+        return display.backgroundType.assetName
     }
     
-    private func loadCities() {
-        guard let data = UserDefaults.standard.data(forKey: citiesKey) else {
+    func addCity(_ name: String, completion: @escaping (Bool) -> Void) {
+        let exists = cities.contains { $0.name.lowercased() == name.lowercased() }
+        if exists {
+            completion(false)
             return
         }
-        do {
-            let decoder = JSONDecoder()
-            cities = try decoder.decode([WeatherFirstInfo].self, from: data)
-        } catch {
-            print(error)
-        }
-    }
-    
-    func backgroundImage(for city: WeatherFirstInfo) -> UIImage? {
-        let isCold = city.temp <= 10
-        return UIImage(
-            named: isCold ? BackgroundType.coldWeather.assetName
-            : BackgroundType.sunnyDefault.assetName
-        )
-    }
-    
-    func addCity(_ cityName: String, completion: @escaping (Bool) -> Void) {
-        let cityExists = cities.contains { city in
-                city.name.lowercased() == cityName.lowercased()
-            }
-
-            if cityExists {
-                completion(false)
-                return
-            }
         
-        weatherService.getFirstInfo(for: cityName) { [weak self] result in
+        weatherService.getFirstInfo(for: name) { [weak self] result in
             switch result {
-            case .success(let weatherInfo):
-                self?.cities.append(weatherInfo)
-                self?.onCitiesUpdated?()
+            case .success(let info):
+                self?.cities.append(info)
                 completion(true)
-                
             case .failure:
                 completion(false)
             }
@@ -95,6 +61,18 @@ class CitiesViewModel {
     func removeCity(at index: Int) {
         guard index < cities.count else { return }
         cities.remove(at: index)
-        onCitiesUpdated?()
+    }
+    
+    private func saveCities() {
+        guard let data = try? JSONEncoder().encode(cities) else { return }
+        UserDefaults.standard.set(data, forKey: citiesKey)
+    }
+    
+    private func loadCities() {
+        guard let data = UserDefaults.standard.data(forKey: citiesKey),
+              let decoded = try? JSONDecoder().decode([WeatherFirstInfo].self, from: data) else {
+            return
+        }
+        cities = decoded
     }
 }

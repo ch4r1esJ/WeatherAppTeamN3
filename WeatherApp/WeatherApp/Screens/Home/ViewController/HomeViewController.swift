@@ -8,12 +8,9 @@
 import UIKit
 
 class HomeViewController: UIViewController {
-    
-    // MARK: Properties
-    
     private let locationView = LocationView()
     private let infoView = InfoView()
-    private let homeViewModel = HomeViewModel()
+    private let viewModel = HomeViewModel()
     
     private let todaySectionView: UIView = {
         let view = UIView()
@@ -78,37 +75,27 @@ class HomeViewController: UIViewController {
         return imageView
     }()
     
-    // MARK: Life Cycle
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupBackgroundImage()
-        setupView()
-        registerCell()
-        configure()
+        setupViews()
+        setupCollectionView()
         setupActions()
-        homeViewModel.onWeatherLoaded = { [weak self] _ in
-            DispatchQueue.main.async {
-                self?.configure()
-                self?.forecastList.reloadData()
-            }
-        }
+        bindViewModel()
     }
-    
-    // MARK: Methods
     
     private func setupBackgroundImage() {
         view.addSubview(backgroundImage)
         backgroundImage.frame = view.bounds
     }
     
-    private func registerCell() {
+    private func setupCollectionView() {
         forecastList.register(HomeCell.self, forCellWithReuseIdentifier: "HomeCell")
         forecastList.dataSource = self
         forecastList.delegate = self
     }
     
-    private func setupView() {
+    private func setupViews() {
         view.addSubview(locationView)
         view.addSubview(infoView)
         view.addSubview(todaySectionView)
@@ -157,7 +144,7 @@ class HomeViewController: UIViewController {
     private func setupActions() {
         detailsButton.addAction(UIAction { [weak self] _ in
             guard let self = self,
-                  let coord = self.homeViewModel.weatherResponse?.city.coord else { return }
+                  let coord = self.viewModel.weatherResponse?.city.coord else { return }
             let detailsVC = DetailsViewController()
             detailsVC.lat = coord.lat
             detailsVC.lon = coord.lon
@@ -165,33 +152,38 @@ class HomeViewController: UIViewController {
         }, for: .touchUpInside)
     }
     
-    func configure() {
-        locationView.configure(city: homeViewModel.cityName, image: homeViewModel.weatherIconImage(), )
-        infoView.configure(temperature: homeViewModel.temperature, max: homeViewModel.max, min: homeViewModel.min)
-        self.backgroundImage.image = homeViewModel.backgroundImage()
+    private func bindViewModel() {
+        viewModel.onWeatherLoaded = { [weak self] _ in
+            DispatchQueue.main.async {
+                self?.updateUI()
+            }
+        }
+    }
+    
+    private func updateUI() {
+        locationView.configure(city: viewModel.cityName, iconName: viewModel.weatherIconName)
+        infoView.configure(temperature: viewModel.temperature, max: viewModel.maxTemp, min: viewModel.minTemp)
+        backgroundImage.image = UIImage(named: viewModel.backgroundAssetName)
+        forecastList.reloadData()
+    }
+    
+    func loadWeather(lat: Double, lon: Double) {
+        viewModel.loadWeather(lat: lat, lon: lon)
     }
 }
 
-extension HomeViewController: UICollectionViewDataSource {
+extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return homeViewModel.numberOfForecastItems()
+        viewModel.numberOfForecastItems()
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "HomeCell", for: indexPath) as? HomeCell else {
             return UICollectionViewCell()
         }
-        let forecast = homeViewModel.forecastIcon(at: indexPath.row)
-        cell.configure(temperature: forecast.temperature, iconURL: forecast.iconURL, time: forecast.time)
+        let item = viewModel.forecastItem(at: indexPath.row)
+        cell.configure(temperature: item.temp, iconURL: item.iconURL, time: item.time)
         return cell
     }
 }
 
-extension HomeViewController: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-    }
-    
-    func loadWeather(lat: Double, lon: Double) {
-        homeViewModel.loadWeather(lat: lat, lon: lon)
-    }
-}

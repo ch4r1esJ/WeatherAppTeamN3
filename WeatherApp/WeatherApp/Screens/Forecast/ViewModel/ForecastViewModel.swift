@@ -6,13 +6,10 @@
 //
 
 import Foundation
-import UIKit
 
-@MainActor
 class ForecastViewModel {
-    // MARK: Properties
-    
-    let weatherService = WeatherService()
+    private let weatherService = WeatherService()
+    private let displayService = WeatherDisplayService()
     
     private(set) var items: [ForecastItem] = [] {
         didSet { onUpdate?() }
@@ -21,40 +18,48 @@ class ForecastViewModel {
     private(set) var currentCityName: String = "" {
         didSet { onUpdate?() }
     }
-    var cityName: String {
-        let raw = weatherResponse?.city.name ?? "Unknown"
-        return raw.components(separatedBy: ",").last?.trimmingCharacters(in: .whitespacesAndNewlines) ?? raw
-    }
     
     private(set) var weatherResponse: WeatherResponse?
     
     var onUpdate: (() -> Void)?
     var onError: ((String) -> Void)?
     
-    private let service = WeatherService()
-    private let inputFormatter: DateFormatter = {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        return dateFormatter
+    private let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        return formatter
     }()
     
-    private let outputFormatter: DateFormatter = {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "E"
-        return dateFormatter
+    private let dayFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "E"
+        return formatter
     }()
     
-    // MARK: Methods
+    var weatherIconName: String {
+        guard let first = items.first else { return "defaultIcon" }
+        let temp = getTemp(from: first.temperatureText) ?? 20
+        let display = displayService.getDisplay(iconCode: first.iconCode, temperature: temp)
+        return display.iconName
+    }
+    
+    var backgroundAssetName: String {
+        guard let first = items.first else {
+            return BackgroundType.sunnyDefault.assetName
+        }
+        let temp = getTemp(from: first.temperatureText) ?? 20
+        let display = displayService.getDisplay(iconCode: first.iconCode, temperature: temp)
+        return display.backgroundType.assetName
+    }
     
     func loadForecast(lat: Double, lon: Double) {
-        weatherService.loadWeatherForcast(lat: lat, lon: lon) { [weak self] response in
-            guard let self = self else { return }
-            self.processResponse(response) 
+        weatherService.loadForecast(lat: lat, lon: lon) { [weak self] response in
+            self?.processResponse(response)
         }
     }
     
-    func updateForecast(for cityName: String) {
-        service.loadWeatherForCity(cityName) { [weak self] response in
+    func updateForecast(for city: String) {
+        weatherService.loadWeatherForCity(city) { [weak self] response in
             guard let self = self, let response = response else {
                 self?.onError?("City not found")
                 return
@@ -63,34 +68,30 @@ class ForecastViewModel {
         }
     }
     
-    func backgroundImage() -> UIImage? {
-        let defaultImage = UIImage(named: BackgroundType.sunnyDefault.assetName)
-        guard let firstEntry = items.first,
-              let currentTemp = getTemperatureValue(from: firstEntry.temperatureText) else {
-            return defaultImage
-        }
-        if currentTemp <= 10.0 {
-            return UIImage(named: BackgroundType.coldWeather.assetName)
-        } else {
-            return defaultImage
-        }
+    func numberOfRows() -> Int {
+        items.count
     }
     
-    func weatherIconImage() -> UIImage? {
-        guard let firstEntry = items.first else { return UIImage(named: "defaultIcon") }
-        let currentTemp = getTemperatureValue(from: firstEntry.temperatureText) ?? 20
-        let isCold = currentTemp <= 10.0
-        let iconName = WeatherIconManager.iconName(for: firstEntry.iconCode, isCold: isCold)
-        print("WEATHER ICON: code=\(firstEntry.iconCode), temp=\(currentTemp)°C, isCold=\(isCold) → \(iconName)")
-        return UIImage(named: iconName)
+    func item(at index: Int) -> ForecastItem {
+        items[index]
+    }
+    
+    private func processResponse(_ response: WeatherResponse) {
+        weatherResponse = response
+        let parts = response.city.name.split(separator: ",")
+        currentCityName = parts.last?.trimmingCharacters(in: .whitespacesAndNewlines) ?? response.city.name
+        
+        let daily = getDailyForecasts(response.list, limit: 5)
+        items = daily.map { convertToForecastItem($0) }
     }
     
     private func convertToForecastItem(_ entry: WeatherItem) -> ForecastItem {
         let dayText = formatDate(entry.dtTxt)
-        let tempRounded = Int(round(entry.main.temp))
-        let tempText = "\(tempRounded)°"
+        let temp = Int(round(entry.main.temp))
+        let tempText = "\(temp)°"
         let iconCode = entry.weather.first?.icon ?? ""
-        let iconURL = "https://openweathermap.org/img/wn/\(iconCode)@2x.png"
+        let iconURL = displayService.getIconURL(from: iconCode)
+        
         return ForecastItem(
             dateText: dayText,
             imageUrl: iconURL,
@@ -99,24 +100,12 @@ class ForecastViewModel {
         )
     }
     
-    private func processResponse(_ response: WeatherResponse) {
-        self.weatherResponse = response
-        let rawName = response.city.name
-        let parts = rawName.split(separator: ",")
-        let cleaned = parts.last?.trimmingCharacters(in: .whitespacesAndNewlines) ?? rawName
-        self.currentCityName = cleaned
-        let daily = getDailyForecasts(response.list, limit: 5)
-        let mapped = daily.map { convertToForecastItem($0) }
-        self.items = mapped
-    }
-    
     private func getDailyForecasts(_ entries: [WeatherItem], limit: Int) -> [WeatherItem] {
         var result: [WeatherItem] = []
         var seenDays = Set<String>()
         
         for entry in entries {
             let dayKey = String(entry.dtTxt.prefix(10))
-            
             if !seenDays.contains(dayKey) {
                 seenDays.insert(dayKey)
                 result.append(entry)
@@ -126,27 +115,18 @@ class ForecastViewModel {
         return result
     }
     
-    private func getTemperatureValue(from text: String) -> Double? {
-        let cleanedString = text.filter { "0123456789-.".contains($0) }
-        return Double(cleanedString)
+    private func getTemp(from text: String) -> Double? {
+        let cleaned = text.filter { "0123456789-.".contains($0) }
+        return Double(cleaned)
     }
     
     private func formatDate(_ dateText: String) -> String {
-        guard let date = inputFormatter.date(from: dateText) else {
+        guard let date = dateFormatter.date(from: dateText) else {
             return dateText
         }
-        
         if Calendar.current.isDateInToday(date) {
             return "Today"
         }
-        return outputFormatter.string(from: date)
-    }
-    
-    func numberOfRows() -> Int {
-        return items.count
-    }
-    
-    func item(at index: Int) -> ForecastItem {
-        return items[index]
+        return dayFormatter.string(from: date)
     }
 }

@@ -1,5 +1,5 @@
 //
-//  TabBar.swift
+//  TabController.swift
 //  WeatherApp
 //
 //  Created by Charles Janjgava on 11/1/25.
@@ -12,15 +12,14 @@ class TabController: UITabBarController {
     private var forecastVC: ForecastViewController!
     private var suggestionsVC: SuggestionViewController!
     private var citiesVC: CitiesViewController!
-
-    let latKey = "Latitude"
-    let lonKey = "Longtitude"
+    
+    private let locationService = LocationService()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupTabs()
         setupTabBarAppearance()
-        loadLocation()
+        loadInitialLocation()
     }
     
     private func setupTabBarAppearance() {
@@ -48,14 +47,14 @@ class TabController: UITabBarController {
         suggestionsVC.tabBarItem = UITabBarItem(
             title: "Suggestions",
             image: UIImage(systemName: "append.page"),
-            tag: 1
+            tag: 2
         )
         
         citiesVC = CitiesViewController()
         citiesVC.tabBarItem = UITabBarItem(
             title: "Cities",
             image: UIImage(systemName: "plus.circle"),
-            tag: 1
+            tag: 3
         )
         
         citiesVC.onCitySelected = { [weak self] weatherInfo in
@@ -66,37 +65,24 @@ class TabController: UITabBarController {
     }
     
     private func handleCitySelection(_ weatherInfo: WeatherFirstInfo) {
-        saveLocation(lat: weatherInfo.lat, lon: weatherInfo.lon)
-        homeVC.loadWeather(lat: weatherInfo.lat, lon: weatherInfo.lon)
-        forecastVC.loadWeather(lat: weatherInfo.lat, lon: weatherInfo.lon)
-        suggestionsVC.loadWeather(lat: weatherInfo.lat, lon: weatherInfo.lon)
+        locationService.save(lat: weatherInfo.lat, lon: weatherInfo.lon)
+        loadWeather(lat: weatherInfo.lat, lon: weatherInfo.lon)
         selectedIndex = 0
     }
     
-    private func saveLocation(lat: Double, lon: Double) {
-        UserDefaults.standard.set(lat, forKey: latKey)
-        UserDefaults.standard.set(lon, forKey: lonKey)
-    }
-    
-    private func loadLocation() {
-        let savedLat = UserDefaults.standard.double(forKey: latKey)
-        let savedLon = UserDefaults.standard.double(forKey: lonKey)
-        
+    private func loadInitialLocation() {
         _ = homeVC.view
         _ = forecastVC.view
         _ = suggestionsVC.view
         
-        if savedLat != 0.0 && savedLon != 0.0 {
-            homeVC.loadWeather(lat: savedLat, lon: savedLon)
-            forecastVC.loadWeather(lat: savedLat, lon: savedLon)
-            suggestionsVC.loadWeather(lat: savedLat, lon: savedLon)
-        } else {
-            let defaultLat = 42.3993
-            let defaultLon = 42.5491
-            homeVC.loadWeather(lat: defaultLat, lon: defaultLon)
-            forecastVC.loadWeather(lat: defaultLat, lon: defaultLon)
-            suggestionsVC.loadWeather(lat: defaultLat, lon: defaultLon)
-            saveLocation(lat: defaultLat, lon: defaultLon)
-        }
+        let location = locationService.load()
+        loadWeather(lat: location.lat, lon: location.lon)
+        locationService.save(lat: location.lat, lon: location.lon)
+    }
+    
+    private func loadWeather(lat: Double, lon: Double) {
+        homeVC.loadWeather(lat: lat, lon: lon)
+        forecastVC.loadWeather(lat: lat, lon: lon)
+        suggestionsVC.loadWeather(lat: lat, lon: lon)
     }
 }

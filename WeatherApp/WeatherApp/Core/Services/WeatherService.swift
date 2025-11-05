@@ -8,16 +8,15 @@
 import Foundation
 
 class WeatherService {
-    
     private let networkManager: NetworkManager
-    
     private(set) var weatherResponse: WeatherResponse?
     
     init(networkManager: NetworkManager = NetworkManager()) {
         self.networkManager = networkManager
     }
-    func getFirstInfo(for cityName: String, completion: @escaping (Result<WeatherFirstInfo, Error>) -> Void) {
-        let url = "https://api.openweathermap.org/data/2.5/weather?q=\(cityName)&appid=390b1c9d792d64568df3ea91ce636c59&units=metric"
+    
+    func getFirstInfo(for city: String, completion: @escaping (Result<WeatherFirstInfo, Error>) -> Void) {
+        let url = "\(Config.baseURL)/weather?q=\(city)&appid=\(Config.weatherAPIKey)&units=metric"
         
         networkManager.getData(url: url) { (result: Result<WeatherInfo, Error>) in
             switch result {
@@ -29,50 +28,38 @@ class WeatherService {
                     lon: weather.coord.lon
                 )
                 completion(.success(info))
-                
             case .failure(let error):
-                print("Failed to get coordinates: \(error.localizedDescription)")
                 completion(.failure(error))
             }
         }
     }
     
-    
-    func getCoordinates(for cityName: String, completion: @escaping (Double, Double) -> ()) {
-        let url = "https://api.openweathermap.org/data/2.5/weather?q=\(cityName)&appid=390b1c9d792d64568df3ea91ce636c59&units=metric"
+    func getCoordinates(for city: String, completion: @escaping (Double, Double) -> Void) {
+        let url = "\(Config.baseURL)/weather?q=\(city)&appid=\(Config.weatherAPIKey)&units=metric"
         
         networkManager.getData(url: url) { (result: Result<CurrentWeatherResponse, Error>) in
-            
-            switch result {
-            case .success(let weather):
-                let lat = weather.coord.lat
-                let lon = weather.coord.lon
-                completion(lat,lon)
-                
-            case .failure(let error):
-                print("Failed to get coordinates: \(error.localizedDescription)")
+            if case .success(let weather) = result {
+                completion(weather.coord.lat, weather.coord.lon)
             }
         }
     }
     
-    func loadWeatherForcast(lat: Double, lon: Double, completion: @escaping (WeatherResponse) -> ()) {
-        let url = "https://api.openweathermap.org/data/2.5/forecast?lat=\(lat)&lon=\(lon)&appid=eda9b39a8f8b30c8f5eddbf6f47013f0&units=metric"
+    func loadForecast(lat: Double, lon: Double, completion: @escaping (WeatherResponse) -> Void) {
+        let url = "\(Config.baseURL)/forecast?lat=\(lat)&lon=\(lon)&appid=\(Config.forecastAPIKey)&units=metric"
         
         networkManager.getData(url: url) { (result: Result<WeatherResponse, Error>) in
-            switch result {
-            case .success(let weatherResponse):
-                self.weatherResponse = weatherResponse
-                completion(weatherResponse)
-                
-            case .failure(let error):
-                print("Error: \(error.localizedDescription)")
+            if case .success(let response) = result {
+                self.weatherResponse = response
+                completion(response)
             }
         }
     }
     
-    func loadWeatherForCity(_ cityName: String, completion: @escaping (WeatherResponse?) -> Void) {
-        getCoordinates(for: cityName) { [weak self] lat, lon in
-            self?.loadWeatherForcast(lat: lat, lon: lon, completion: completion)
+    func loadWeatherForCity(_ city: String, completion: @escaping (WeatherResponse?) -> Void) {
+        getCoordinates(for: city) { [weak self] lat, lon in
+            self?.loadForecast(lat: lat, lon: lon) { response in
+                completion(response)
+            }
         }
     }
 }

@@ -8,19 +8,8 @@
 import UIKit
 
 class ForecastViewController: UIViewController {
-    
-    // MARK: Properties
-    
     private let cityView = CityView()
     private let viewModel = ForecastViewModel()
-    
-    private let weatherImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.contentMode = .scaleAspectFit
-        imageView.tintColor = .white
-        return imageView
-    }()
     
     private let backgroundImageView: UIImageView = {
         let imageView = UIImageView()
@@ -35,7 +24,7 @@ class ForecastViewController: UIViewController {
         weight: .medium,
         color: .white,
         alignment: .left,
-        alpha: 0.9,
+        alpha: 0.9
     )
     
     private let tableView: UITableView = {
@@ -47,26 +36,22 @@ class ForecastViewController: UIViewController {
         return tableView
     }()
     
-    // MARK: Life Cycle
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .clear
         setupUI()
-        setupViewModelCallbacks()
+        bindViewModel()
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        layoutTableAndHeaderFrame()
+        layoutTableAndHeader()
     }
-    
-    // MARK: Methods
     
     private func setupUI() {
         setupTableView()
         addSubviews()
-        setupLayoutConstraints()
+        setupConstraints()
     }
     
     private func setupTableView() {
@@ -82,7 +67,7 @@ class ForecastViewController: UIViewController {
         view.addSubview(tableView)
     }
     
-    private func layoutTableAndHeaderFrame() {
+    private func layoutTableAndHeader() {
         let tableHeight: CGFloat = 6 * 80
         let tableY = view.bounds.midY - (tableHeight / 2) + 170
         tableView.frame = CGRect(
@@ -99,31 +84,30 @@ class ForecastViewController: UIViewController {
         )
     }
     
-    private func setupLayoutConstraints() {
+    private func setupConstraints() {
         cityView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             backgroundImageView.topAnchor.constraint(equalTo: view.topAnchor),
             backgroundImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             backgroundImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             backgroundImageView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
             cityView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
             cityView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             cityView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
         ])
     }
     
-    private func setupViewModelCallbacks() {
+    private func bindViewModel() {
         viewModel.onUpdate = { [weak self] in
-            self?.refreshUIWithViewModel()
+            self?.updateUI()
         }
     }
     
-    private func refreshUIWithViewModel() {
+    private func updateUI() {
         DispatchQueue.main.async {
-            self.cityView.configure(city: self.viewModel.currentCityName,
-                                    weatherIcon: self.viewModel.weatherIconImage())
-            self.backgroundImageView.image = self.viewModel.backgroundImage()
-            self.weatherImageView.image = self.viewModel.weatherIconImage()
+            self.cityView.configure(city: self.viewModel.currentCityName, iconName: self.viewModel.weatherIconName)
+            self.backgroundImageView.image = UIImage(named: self.viewModel.backgroundAssetName)
             self.tableView.reloadData()
         }
     }
@@ -134,14 +118,11 @@ class ForecastViewController: UIViewController {
 }
 
 extension ForecastViewController: UITableViewDataSource, UITableViewDelegate {
-    func tableView(_ tableView: UITableView,
-                   numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         viewModel.numberOfRows()
     }
     
-    func tableView(_ tableView: UITableView,
-                   cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(
             withIdentifier: ForecastCell.identifier,
             for: indexPath
@@ -150,18 +131,11 @@ extension ForecastViewController: UITableViewDataSource, UITableViewDelegate {
         }
         
         let item = viewModel.item(at: indexPath.row)
-        
-        cell.configure(
-            dateText: item.dateText,
-            imageUrl: item.imageUrl,
-            temperatureText: item.temperatureText
-        )
-        
+        cell.configure(dateText: item.dateText, imageUrl: item.imageUrl, temperatureText: item.temperatureText)
         return cell
     }
     
-    func tableView(_ tableView: UITableView,
-                   heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 80
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        80
     }
 }

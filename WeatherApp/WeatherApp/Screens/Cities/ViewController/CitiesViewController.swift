@@ -8,8 +8,6 @@
 import UIKit
 
 class CitiesViewController: UIViewController {
-    // MARK: Properties
-    
     private let viewModel = CitiesViewModel()
     var onCitySelected: ((WeatherFirstInfo) -> Void)?
     
@@ -49,7 +47,6 @@ class CitiesViewController: UIViewController {
         
         let placeholderText = "Search"
         let placeholderColor = UIColor.lightGray
-        
         textField.attributedPlaceholder = NSAttributedString(
             string: placeholderText,
             attributes: [NSAttributedString.Key.foregroundColor: placeholderColor]
@@ -68,8 +65,6 @@ class CitiesViewController: UIViewController {
         return tableView
     }()
     
-    // MARK: Life Cycles
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .red
@@ -77,8 +72,6 @@ class CitiesViewController: UIViewController {
         bindViewModel()
         setupButtonAction()
     }
-    
-    // MARK: Methods
     
     private func setupUI() {
         view.addSubview(backgroundImageView)
@@ -147,7 +140,7 @@ class CitiesViewController: UIViewController {
         }
         addButton.addAction(action, for: .touchUpInside)
     }
-
+    
     private func showDuplicateAlert(for cityName: String) {
         let alert = UIAlertController(
             title: "City Already Added",
@@ -176,13 +169,11 @@ extension CitiesViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        
         guard let city = viewModel.getCity(at: indexPath.row) else { return }
-        let bg = viewModel.backgroundImage(for: city)
-        backgroundImageView.image = bg
-        onCitySelected?(
-            city
-        )
+        
+        let assetName = viewModel.backgroundAssetName(for: city)
+        backgroundImageView.image = UIImage(named: assetName)
+        onCitySelected?(city)
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
@@ -192,7 +183,7 @@ extension CitiesViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, titleForDeleteConfirmationButtonForRowAt indexPath: IndexPath) -> String? {
-        return "Delete"
+        "Delete"
     }
 }
 

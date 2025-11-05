@@ -1,3 +1,4 @@
+//
 //  HomeViewModel.swift
 //  WeatherApp
 //
@@ -5,17 +6,16 @@
 //
 
 import Foundation
-import UIKit
 
 class HomeViewModel {
-    // MARK: Properties
-    
     private let weatherService: WeatherService
-    private(set) var weatherResponse: WeatherResponse?
+    private let displayService = WeatherDisplayService()
     
-    var onWeatherLoaded: ((WeatherResponse) -> Void)?
+    private(set) var weatherResponse: WeatherResponse? {
+        didSet { onWeatherLoaded?(weatherResponse) }
+    }
     
-    // MARK: Init
+    var onWeatherLoaded: ((WeatherResponse?) -> Void)?
     
     init(weatherService: WeatherService = WeatherService()) {
         self.weatherService = weatherService
@@ -26,94 +26,64 @@ class HomeViewModel {
         return "\(Int(temp))°"
     }
     
-    var max: String {
-        guard let maxTemp = weatherResponse?.list.first?.main.tempMax else { return "--" }
-        return "\(Int(maxTemp))"
+    var maxTemp: String {
+        guard let max = weatherResponse?.list.first?.main.tempMax else { return "--" }
+        return "\(Int(max))"
     }
     
-    var min: String {
-        guard let minTemp = weatherResponse?.list.first?.main.tempMin else { return "--" }
-        return "\(Int(minTemp))"
+    var minTemp: String {
+        guard let min = weatherResponse?.list.first?.main.tempMin else { return "--" }
+        return "\(Int(min))"
     }
     
     var cityName: String {
         weatherResponse?.city.name ?? "Unknown"
     }
     
-    private var todaysForecast: [WeatherItem] {
-        guard let list = weatherResponse?.list else { return [] }
-        
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd"
-        _ = dateFormatter.string(from: Date())
-        return Array(list.prefix(8))
+    var weatherIconName: String {
+        guard let first = weatherResponse?.list.first else { return "defaultIcon" }
+        let iconCode = first.weather.first?.icon ?? "01d"
+        let display = displayService.getDisplay(iconCode: iconCode, temperature: first.main.temp)
+        return display.iconName
     }
     
-    func numberOfForecastItems() -> Int {
-        return todaysForecast.count
+    var backgroundAssetName: String {
+        guard let first = weatherResponse?.list.first else {
+            return BackgroundType.sunnyDefault.assetName
+        }
+        let iconCode = first.weather.first?.icon ?? "01d"
+        let display = displayService.getDisplay(iconCode: iconCode, temperature: first.main.temp)
+        return display.backgroundType.assetName
     }
     
     func loadWeather(lat: Double, lon: Double) {
-        weatherService.loadWeatherForcast(lat: lat, lon: lon) { [weak self] response in
+        weatherService.loadForecast(lat: lat, lon: lon) { [weak self] response in
             self?.weatherResponse = response
-            self?.onWeatherLoaded?(response)
         }
     }
     
-    func getIconURL(from iconCode: String) -> String {
-        return "https://openweathermap.org/img/wn/\(iconCode)@2x.png"
+    func numberOfForecastItems() -> Int {
+        return Array((weatherResponse?.list ?? []).prefix(8)).count
     }
     
-    func getCurrentWeatherIcon() -> String? {
-        return weatherResponse?.list.first?.weather.first?.icon
-    }
-    
-    private func formatTime(from dateString: String) -> String {
-        let components = dateString.split(separator: " ")
-        guard components.count > 1 else { return "" }
-        let time = String(components[1])
-        return String(time.prefix(5))
-    }
-    
-    private func getTemperatureValue(from text: String) -> Double? {
-        let cleanedString = text.filter { "0123456789-.".contains($0) }
-        return Double(cleanedString)
-    }
-    
-    func forecastIcon(at index: Int) -> (temperature: String, iconURL: String, time: String) {
-        guard index < todaysForecast.count else {
+    func forecastItem(at index: Int) -> (temp: String, iconURL: String, time: String) {
+        guard let list = weatherResponse?.list, index < min(list.count, 8) else {
             return ("--", "", "--")
         }
-        let item = todaysForecast[index]
+        
+        let item = list[index]
         let temp = "\(Int(item.main.temp))°C"
         let iconCode = item.weather.first?.icon ?? "01d"
-        let iconURL = getIconURL(from: iconCode)
+        let iconURL = displayService.getIconURL(from: iconCode)
         let time = formatTime(from: item.dtTxt)
+        
         return (temp, iconURL, time)
     }
     
-    func backgroundImage() -> UIImage? {
-        let defaultImage = UIImage(named: BackgroundType.sunnyDefault.assetName)
-        guard let firstEntry = weatherResponse?.list.first else {
-            return defaultImage
-        }
-        let currentTemp = firstEntry.main.temp
-        if currentTemp <= 10 {
-            return UIImage(named: BackgroundType.coldWeather.assetName)
-        } else {
-            return defaultImage
-        }
-    }
-    
-    func weatherIconImage() -> UIImage? {
-        guard let firstEntry = weatherResponse?.list.first else {
-            return UIImage(named: "defaultIcon")
-        }
-        let fullCode = firstEntry.weather.first?.icon ?? "01d"
-        let prefix = String(fullCode.prefix(2))
-        let temp = firstEntry.main.temp
-        let isCold = temp <= 10
-        let iconName = WeatherIconManager.iconName(for: prefix, isCold: isCold)
-        return UIImage(named: iconName) ?? UIImage(named: "defaultIcon")
+    private func formatTime(from dateString: String) -> String {
+        let parts = dateString.split(separator: " ")
+        guard parts.count > 1 else { return "" }
+        let time = String(parts[1])
+        return String(time.prefix(5))
     }
 }

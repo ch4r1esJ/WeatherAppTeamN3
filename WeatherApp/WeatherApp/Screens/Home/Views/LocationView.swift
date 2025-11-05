@@ -8,8 +8,6 @@
 import UIKit
 
 class LocationView: UIView {
-    // MARK: Properties
-    
     private let hStack = UIStackView.make(axis: .horizontal, distribution: .fill, alignment: .center, spacing: 8)
     
     private let locationPin: UIImageView = {
@@ -31,8 +29,6 @@ class LocationView: UIView {
         return imageView
     }()
     
-    // MARK: Init
-    
     init() {
         super.init(frame: .zero)
         setupView()
@@ -41,8 +37,6 @@ class LocationView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    // MARK: Methods
     
     private func setupView() {
         backgroundColor = .clear
@@ -67,8 +61,8 @@ class LocationView: UIView {
         ])
     }
     
-    func configure(city: String, image: UIImage?) {
+    func configure(city: String, iconName: String) {
         cityName.text = city
-        weatherImage.image = image
+        weatherImage.image = UIImage(named: iconName)
     }
 }

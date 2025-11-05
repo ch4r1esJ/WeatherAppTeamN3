@@ -5,7 +5,7 @@
 //  Created by Charles Janjgava on 11/2/25.
 //
 
-import UIKit
+import Foundation
 
 enum NetworkError: Error {
     case noDataAvailable
@@ -26,41 +26,34 @@ enum NetworkError: Error {
 }
 
 class NetworkManager {
-    func getData<T: Decodable>(url: String, completion: @escaping(Result<T,Error>)->()) {
-        let urlString = url
-        let url = URL(string: urlString)!
-        let urlRequest = URLRequest(url: url)
+    func getData<T: Decodable>(url: String, completion: @escaping(Result<T, Error>) -> Void) {
+        guard let url = URL(string: url) else { return }
         
-        URLSession.shared.dataTask(with: urlRequest) { data, response, error in
-            if let error {
-                print("API Error: \(error.localizedDescription)")
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            if let error = error {
                 completion(.failure(error))
                 return
             }
             
-            guard let response = response as? HTTPURLResponse else {
-                print("No Response")
+            guard let httpResponse = response as? HTTPURLResponse else {
                 completion(.failure(NetworkError.noResponse))
                 return
             }
             
-            guard (200...299).contains(response.statusCode) else {
-                print("Wrong status code")
+            guard (200...299).contains(httpResponse.statusCode) else {
                 completion(.failure(NetworkError.wrongStatusCode))
                 return
             }
             
-            guard let data else {
-                print("No data")
+            guard let data = data else {
                 completion(.failure(NetworkError.noDataAvailable))
                 return
             }
             
             do {
-                let decodedObject = try JSONDecoder().decode(T.self, from: data)
-                completion(.success(decodedObject))
+                let decoded = try JSONDecoder().decode(T.self, from: data)
+                completion(.success(decoded))
             } catch {
-                print("Decoding error: \(error)")
                 completion(.failure(NetworkError.decodingError))
             }
         }.resume()

@@ -84,7 +84,6 @@ struct WeatherDetail {
     let value: String
 }
 
-
 struct Weather: Decodable {
     let id: Int
     let main: String
@@ -122,4 +121,3 @@ struct WeatherFirstInfo: Codable {
     let lat: Double
     let lon: Double
 }
-
