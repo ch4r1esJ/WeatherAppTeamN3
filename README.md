@@ -1,1 +1,3 @@
 # WeatherApp
+
+This is a basic and minimalistic weather app where you can add any cities you'd like and get weather information about them. The background and icons change according to the current weather conditions.You can add cities to your favorites list, and when you tap on one, it takes you to the home page where you see basic weather information. From there, you can click on details to see more comprehensive weather data. The second tab is for 5-day forecast, the third tab shows weather-based recommendations, and the last tab is where you manage your favorite cities.The project is based on MVVM architecture and uses a generic network manager.

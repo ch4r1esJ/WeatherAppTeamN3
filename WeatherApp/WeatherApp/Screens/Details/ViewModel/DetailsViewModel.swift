@@ -6,30 +6,37 @@
 //
 
 import Foundation
-import UIKit
 
 class DetailsViewModel {
-    // MARK: UI Components
+    private let weatherService = WeatherService()
+    private let displayService = WeatherDisplayService()
     
-    var cityName: String = "Tsqaltubo"
-    var iconName: String = "heavyrainIcon"
+    var cityName: String = ""
     var details: [WeatherDetail] = []
-    var weatherService = WeatherService()
-    var currentTemp: Double = 0.0
     
-    // MARK: Methods
+    private var currentTemp: Double = 0.0
+    
+    var weatherIconName: String {
+        guard let first = weatherService.weatherResponse?.list.first else {
+            return "defaultIcon"
+        }
+        let iconCode = first.weather.first?.icon ?? "01d"
+        let display = displayService.getDisplay(iconCode: iconCode, temperature: first.main.temp)
+        return display.iconName
+    }
+    
+    var backgroundAssetName: String {
+        let display = displayService.getDisplay(iconCode: "01d", temperature: currentTemp)
+        return display.backgroundType.assetName
+    }
     
     func loadWeatherDetails(lat: Double, lon: Double, completion: @escaping () -> Void) {
-        weatherService.loadWeatherForcast(lat: lat, lon: lon) { [weak self] response in
+        weatherService.loadForecast(lat: lat, lon: lon) { [weak self] response in
             guard let self = self else { return }
             
             let first = response.list.first
             self.cityName = response.city.name
             self.currentTemp = first?.main.temp ?? 0.0
-            
-            let prefix = String(first?.weather.first?.icon.prefix(2) ?? "01")
-            let isCold = self.currentTemp <= 10
-            self.iconName = WeatherIconManager.iconName(for: prefix, isCold: isCold)
             
             self.details = [
                 WeatherDetail(title: "Feels Like", value: "\(first?.main.feelsLike ?? 0) °C"),
@@ -42,14 +49,6 @@ class DetailsViewModel {
             ]
             
             completion()
-        }
-    }
-    
-    func backgroundImage(for temp: Double) -> UIImage? {
-        if temp <= 10 {
-            return UIImage(named: BackgroundType.coldWeather.assetName)
-        } else {
-            return UIImage(named: BackgroundType.sunnyDefault.assetName)
         }
     }
 }

@@ -1,5 +1,5 @@
 //
-//  TopView.swift
+//  CityView.swift
 //  WeatherApp
 //
 //  Created by Atinati on 03.11.25.
@@ -8,9 +8,6 @@
 import UIKit
 
 class CityView: UIView {
-    
-    // MARK: Properties
-    
     private let hStack = UIStackView.make(axis: .horizontal, distribution: .fill, alignment: .center, spacing: 8)
     
     private let cityName = UILabel.make(text: "", fontSize: 17, weight: .bold, color: .white)
@@ -32,8 +29,6 @@ class CityView: UIView {
         return imageView
     }()
     
-    // MARK: Initialization
-    
     init() {
         super.init(frame: .zero)
         setupView()
@@ -42,8 +37,6 @@ class CityView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    // MARK: Methods
     
     private func setupView() {
         backgroundColor = .clear
@@ -67,11 +60,10 @@ class CityView: UIView {
         ])
     }
     
-    func configure(city: String, weatherIcon: UIImage?) {
+    func configure(city: String, iconName: String) {
         let parts = city.split(separator: ",")
         let cleanedCity = parts.last?.trimmingCharacters(in: .whitespacesAndNewlines) ?? city
-        
         cityName.text = cleanedCity
-        weatherImage.image = weatherIcon
+        weatherImage.image = UIImage(named: iconName)
     }
 }

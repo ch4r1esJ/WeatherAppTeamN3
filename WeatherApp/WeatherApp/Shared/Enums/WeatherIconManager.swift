@@ -1,5 +1,5 @@
 //
-//  WeatherIconMapper.swift
+//  WeatherIconManager.swift
 //  WeatherApp
 //
 //  Created by Atinati on 02.11.25.

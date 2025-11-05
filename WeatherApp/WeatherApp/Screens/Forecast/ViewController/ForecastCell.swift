@@ -13,7 +13,7 @@ class ForecastCell: UITableViewCell {
     // MARK: Properties
     
     static let identifier = "ForecastCell"
-        
+    
     private let containerView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 16

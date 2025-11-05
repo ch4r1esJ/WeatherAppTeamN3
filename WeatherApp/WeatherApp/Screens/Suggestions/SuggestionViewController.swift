@@ -8,9 +8,10 @@
 import UIKit
 
 class SuggestionViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
-    // MARK: Methods
+    private let viewModel = SuggestionViewModel()
+    private var suggestions: [String] = []
+    
     private let backgroundImageView: UIImageView = {
-        
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFill
@@ -18,40 +19,40 @@ class SuggestionViewController: UIViewController, UITableViewDataSource, UITable
         return imageView
     }()
     
-    let img: UIImageView = {
+    private let weatherIcon: UIImageView = {
         let imageView = UIImageView(image: UIImage(named: "img"))
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
     
-    let locationImg: UIImageView = {
+    private let locationIcon: UIImageView = {
         let imageView = UIImageView(image: UIImage(named: "locationPin"))
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.tintColor = .gray
         return imageView
     }()
     
-    let locationName: UILabel = .make(
+    private let locationName: UILabel = .make(
         fontSize: 20,
         weight: .medium,
         color: .white
     )
     
-    let temperature: UILabel = .make(
+    private let temperature: UILabel = .make(
         fontSize: 20,
         weight: .medium,
         color: .white
     )
     
-    let weatherBasedSuggestionLabel: UILabel = .make(
+    private let sectionLabel: UILabel = .make(
         text: "Weather-based Suggestions",
         fontSize: 20,
         weight: .semibold,
         color: .white
     )
     
-    let suggestionsTableView: UITableView = {
+    private let tableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.backgroundColor = .clear
@@ -60,71 +61,61 @@ class SuggestionViewController: UIViewController, UITableViewDataSource, UITable
         return tableView
     }()
     
-    var suggestArray: [String] = []
-    
-    private let viewModel = SuggestionViewModel()
-    
-    // MARK: Life Cycle
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor(red: 8/255, green: 36/255, blue: 79/255, alpha: 0.25)
         setupUI()
-        configureConstraints()
+        setupConstraints()
         bindViewModel()
-//        viewModel.loadWeather(for: "Tsqaltubo")
     }
-    
-    // MARK: Methods
     
     private func setupUI() {
         view.addSubview(backgroundImageView)
-        view.addSubview(locationImg)
-        view.addSubview(img)
-        view.addSubview(weatherBasedSuggestionLabel)
-        view.addSubview(suggestionsTableView)
+        view.addSubview(locationIcon)
+        view.addSubview(weatherIcon)
+        view.addSubview(sectionLabel)
+        view.addSubview(tableView)
         view.addSubview(locationName)
         view.addSubview(temperature)
         
-        suggestionsTableView.dataSource = self
-        suggestionsTableView.delegate = self
-        suggestionsTableView.register(SuggestionCell.self, forCellReuseIdentifier: "SuggestionCell")
-        suggestionsTableView.rowHeight = UITableView.automaticDimension
-        suggestionsTableView.estimatedRowHeight = 60
-        suggestionsTableView.backgroundColor = .clear
-        
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.register(SuggestionCell.self, forCellReuseIdentifier: "SuggestionCell")
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.estimatedRowHeight = 60
+        tableView.backgroundColor = .clear
     }
     
-    private func configureConstraints() {
+    private func setupConstraints() {
         NSLayoutConstraint.activate([
             backgroundImageView.topAnchor.constraint(equalTo: view.topAnchor),
             backgroundImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             backgroundImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             backgroundImageView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
-            locationImg.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
-            locationImg.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 15),
-            locationImg.widthAnchor.constraint(equalToConstant: 24),
-            locationImg.heightAnchor.constraint(equalToConstant: 24),
+            locationIcon.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+            locationIcon.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 15),
+            locationIcon.widthAnchor.constraint(equalToConstant: 24),
+            locationIcon.heightAnchor.constraint(equalToConstant: 24),
             
-            locationName.centerYAnchor.constraint(equalTo: locationImg.centerYAnchor),
-            locationName.leadingAnchor.constraint(equalTo: locationImg.trailingAnchor, constant: 5),
+            locationName.centerYAnchor.constraint(equalTo: locationIcon.centerYAnchor),
+            locationName.leadingAnchor.constraint(equalTo: locationIcon.trailingAnchor, constant: 5),
             
-            temperature.centerYAnchor.constraint(equalTo: locationImg.centerYAnchor),
+            temperature.centerYAnchor.constraint(equalTo: locationIcon.centerYAnchor),
             temperature.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -15),
             
-            img.topAnchor.constraint(equalTo: locationImg.bottomAnchor, constant: 20),
-            img.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            img.widthAnchor.constraint(equalToConstant: 120),
-            img.heightAnchor.constraint(equalToConstant: 120),
+            weatherIcon.topAnchor.constraint(equalTo: locationIcon.bottomAnchor, constant: 20),
+            weatherIcon.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            weatherIcon.widthAnchor.constraint(equalToConstant: 120),
+            weatherIcon.heightAnchor.constraint(equalToConstant: 120),
             
-            weatherBasedSuggestionLabel.topAnchor.constraint(equalTo: img.bottomAnchor, constant: 30),
-            weatherBasedSuggestionLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            sectionLabel.topAnchor.constraint(equalTo: weatherIcon.bottomAnchor, constant: 30),
+            sectionLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             
-            suggestionsTableView.topAnchor.constraint(equalTo: weatherBasedSuggestionLabel.bottomAnchor, constant: 15),
-            suggestionsTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
-            suggestionsTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
-            suggestionsTableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: 0),
+            tableView.topAnchor.constraint(equalTo: sectionLabel.bottomAnchor, constant: 15),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
+            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: 0),
         ])
     }
     
@@ -139,34 +130,25 @@ class SuggestionViewController: UIViewController, UITableViewDataSource, UITable
     private func updateUI() {
         locationName.text = viewModel.cityName
         temperature.text = viewModel.temperature
-        suggestArray = viewModel.getSuggestions()
-        
-        if let backgroundImg = viewModel.backgroundImage() {
-            backgroundImageView.image = backgroundImg
-        }
-        
-        if let weatherIcon = UIImage(named: viewModel.weatherIconName) {
-            img.image = weatherIcon
-        }
-        suggestionsTableView.reloadData()
+        suggestions = viewModel.getSuggestions()
+        backgroundImageView.image = UIImage(named: viewModel.backgroundAssetName)
+        weatherIcon.image = UIImage(named: viewModel.weatherIconName)
+        tableView.reloadData()
     }
     
     func loadWeather(lat: Double, lon: Double) {
         viewModel.loadWeather(lat: lat, lon: lon)
     }
-        
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return suggestArray.count
+        suggestions.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "SuggestionCell", for: indexPath) as? SuggestionCell else {
             return UITableViewCell()
         }
-        
-        let suggestion = suggestArray[indexPath.row]
-        cell.configure(with: suggestion)
-        
+        cell.configure(with: suggestions[indexPath.row])
         return cell
     }
     

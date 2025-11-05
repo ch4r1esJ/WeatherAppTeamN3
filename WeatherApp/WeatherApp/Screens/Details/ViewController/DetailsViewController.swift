@@ -8,8 +8,6 @@
 import UIKit
 
 class DetailsViewController: UIViewController, UITableViewDataSource {
-    // MARK: UI Components
-    
     private let viewModel = DetailsViewModel()
     private let tableView = UITableView()
     private let cityLabel = UILabel()
@@ -20,14 +18,11 @@ class DetailsViewController: UIViewController, UITableViewDataSource {
     var lon: Double = 0
     var lat: Double = 0
     
-    // MARK: Life Cycle
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         loadWeatherDetails()
     }
-    // MARK: Methods
     
     private func setupUI() {
         backgroundImageView.image = UIImage(named: "defaultBackground")
@@ -94,15 +89,15 @@ class DetailsViewController: UIViewController, UITableViewDataSource {
             guard let self = self else { return }
             DispatchQueue.main.async {
                 self.cityLabel.text = self.viewModel.cityName
-                self.weatherIcon.image = UIImage(named: self.viewModel.iconName)
-                self.backgroundImageView.image = self.viewModel.backgroundImage(for: self.viewModel.currentTemp)
+                self.weatherIcon.image = UIImage(named: self.viewModel.weatherIconName)
+                self.backgroundImageView.image = UIImage(named: self.viewModel.backgroundAssetName)
                 self.tableView.reloadData()
             }
         }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.details.count
+        viewModel.details.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -113,4 +108,3 @@ class DetailsViewController: UIViewController, UITableViewDataSource {
         return cell
     }
 }
-
