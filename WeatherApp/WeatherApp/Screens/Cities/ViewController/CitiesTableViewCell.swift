@@ -20,24 +20,20 @@ class CitiesTableViewCell: UITableViewCell {
         return view
     }()
     
-    private let temperatureLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: 45, weight: .semibold)
-        label.textAlignment = .center
-        label.textColor = .white
-        label.text = "20º"
-        return label
-    }()
+    private let temperatureLabel: UILabel = .make(
+        text: "20º",
+        fontSize: 45,
+        weight: .semibold,
+        color: .white,
+        alignment: .center
+    )
     
-    private let cityLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: 35, weight: .medium)
-        label.textColor = .white
-        label.text = "Tbilisi"
-        return label
-    }()
+    private let cityLabel: UILabel = .make(
+        text: "Tbilisi",
+        fontSize: 35,
+        weight: .medium,
+        color: .white
+    )
     
     // MARK: Life Cycles
     

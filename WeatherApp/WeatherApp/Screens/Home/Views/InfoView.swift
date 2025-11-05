@@ -10,35 +10,29 @@ import UIKit
 class InfoView: UIView {
     // MARK: - Properties
     
-    private let temperatureLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: 80, weight: .bold)
-        label.textColor = .white
-        label.textAlignment = .center
-        label.text = "24ºC"
-        return label
-    }()
+    private let temperatureLabel: UILabel = .make(
+        text: "24ºC",
+        fontSize: 80,
+        weight: .bold,
+        color: .white,
+        alignment: .center
+    )
     
-    private let precipitationsLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: 19, weight: .medium)
-        label.text = "Precipitations"
-        label.textAlignment = .center
-        label.textColor = .white
-        return label
-    }()
+    private let precipitationsLabel: UILabel = .make(
+        text: "Precipitations",
+        fontSize: 19,
+        weight: .medium,
+        color: .white,
+        alignment: .center
+    )
     
-    private let maxMinLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: 19, weight: .medium)
-        label.textAlignment = .center
-        label.textColor = .white
-        label.text = "Max.: 25º Min.: 12º"
-        return label
-    }()
+    private let maxMinLabel: UILabel = .make(
+        text: "Max.: 25º Min.: 12º",
+        fontSize: 19,
+        weight: .medium,
+        color: .white,
+        alignment: .center
+    )
     
     // MARK: Init
     

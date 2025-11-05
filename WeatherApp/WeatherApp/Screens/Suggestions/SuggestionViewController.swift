@@ -8,6 +8,7 @@
 import UIKit
 
 class SuggestionViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+    // MARK: Methods
     private let backgroundImageView: UIImageView = {
         
         let imageView = UIImageView()
@@ -31,30 +32,24 @@ class SuggestionViewController: UIViewController, UITableViewDataSource, UITable
         return imageView
     }()
     
-    let locationName: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .systemFont(ofSize: 20, weight: .medium)
-        label.textColor = .white
-        return label
-    }()
+    let locationName: UILabel = .make(
+        fontSize: 20,
+        weight: .medium,
+        color: .white
+    )
     
-    let temperature: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .systemFont(ofSize: 20, weight: .medium)
-        label.textColor = .white
-        return label
-    }()
+    let temperature: UILabel = .make(
+        fontSize: 20,
+        weight: .medium,
+        color: .white
+    )
     
-    let weatherBasedSuggestionLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .systemFont(ofSize: 20, weight: .semibold)
-        label.text = "Weather-based Suggestions"
-        label.textColor = .white
-        return label
-    }()
+    let weatherBasedSuggestionLabel: UILabel = .make(
+        text: "Weather-based Suggestions",
+        fontSize: 20,
+        weight: .semibold,
+        color: .white
+    )
     
     let suggestionsTableView: UITableView = {
         let tableView = UITableView()
@@ -69,14 +64,18 @@ class SuggestionViewController: UIViewController, UITableViewDataSource, UITable
     
     private let viewModel = SuggestionViewModel()
     
+    // MARK: Life Cycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor(red: 8/255, green: 36/255, blue: 79/255, alpha: 0.25)
         setupUI()
         configureConstraints()
         bindViewModel()
-        viewModel.loadWeather(for: "Tsqaltubo")
+//        viewModel.loadWeather(for: "Tsqaltubo")
     }
+    
+    // MARK: Methods
     
     private func setupUI() {
         view.addSubview(backgroundImageView)
@@ -155,9 +154,7 @@ class SuggestionViewController: UIViewController, UITableViewDataSource, UITable
     func loadWeather(lat: Double, lon: Double) {
         viewModel.loadWeather(lat: lat, lon: lon)
     }
-    
-    // MARK: TableView DataSource
-    
+        
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return suggestArray.count
     }

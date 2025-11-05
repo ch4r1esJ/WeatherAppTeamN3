@@ -12,17 +12,15 @@ class TabController: UITabBarController {
     private var forecastVC: ForecastViewController!
     private var suggestionsVC: SuggestionViewController!
     private var citiesVC: CitiesViewController!
-    private let topLineView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .label
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
+
+    let latKey = "Latitude"
+    let lonKey = "Longtitude"
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupTabs()
         setupTabBarAppearance()
+        loadLocation()
     }
     
     private func setupTabBarAppearance() {
@@ -32,7 +30,6 @@ class TabController: UITabBarController {
     }
     
     private func setupTabs() {
-        
         forecastVC = ForecastViewController()
         forecastVC.tabBarItem = UITabBarItem(
             title: "Forecast",
@@ -69,9 +66,37 @@ class TabController: UITabBarController {
     }
     
     private func handleCitySelection(_ weatherInfo: WeatherFirstInfo) {
+        saveLocation(lat: weatherInfo.lat, lon: weatherInfo.lon)
         homeVC.loadWeather(lat: weatherInfo.lat, lon: weatherInfo.lon)
         forecastVC.loadWeather(lat: weatherInfo.lat, lon: weatherInfo.lon)
         suggestionsVC.loadWeather(lat: weatherInfo.lat, lon: weatherInfo.lon)
         selectedIndex = 0
+    }
+    
+    private func saveLocation(lat: Double, lon: Double) {
+        UserDefaults.standard.set(lat, forKey: latKey)
+        UserDefaults.standard.set(lon, forKey: lonKey)
+    }
+    
+    private func loadLocation() {
+        let savedLat = UserDefaults.standard.double(forKey: latKey)
+        let savedLon = UserDefaults.standard.double(forKey: lonKey)
+        
+        _ = homeVC.view
+        _ = forecastVC.view
+        _ = suggestionsVC.view
+        
+        if savedLat != 0.0 && savedLon != 0.0 {
+            homeVC.loadWeather(lat: savedLat, lon: savedLon)
+            forecastVC.loadWeather(lat: savedLat, lon: savedLon)
+            suggestionsVC.loadWeather(lat: savedLat, lon: savedLon)
+        } else {
+            let defaultLat = 42.3993
+            let defaultLon = 42.5491
+            homeVC.loadWeather(lat: defaultLat, lon: defaultLon)
+            forecastVC.loadWeather(lat: defaultLat, lon: defaultLon)
+            suggestionsVC.loadWeather(lat: defaultLat, lon: defaultLon)
+            saveLocation(lat: defaultLat, lon: defaultLon)
+        }
     }
 }

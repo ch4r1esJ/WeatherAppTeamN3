@@ -18,25 +18,20 @@ class SuggestionCell: UITableViewCell {
         return view
     }()
     
-    let suggestionTxt: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .systemFont(ofSize: 16)
-        label.numberOfLines = 0
-        label.textAlignment = .left
-        label.textColor = .white
-        return label
-    }()
+    let suggestionTxt: UILabel = .make(
+        fontSize: 16,
+        weight: .regular,
+        color: .white,
+        numberOfLines: 0
+    )
     
-    let bulletPoint: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .systemFont(ofSize: 16)
-        label.text = "•"
-        label.textAlignment = .center
-        label.textColor = .white
-        return label
-    }()
+    let bulletPoint: UILabel = .make(
+        text: "•",
+        fontSize: 16,
+        weight: .regular,
+        color: .white,
+        alignment: .center
+    )
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
