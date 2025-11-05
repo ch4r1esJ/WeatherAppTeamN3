@@ -54,7 +54,6 @@ class ForecastViewController: UIViewController {
         view.backgroundColor = .clear
         setupUI()
         setupViewModelCallbacks()
-//        viewModel.loadForecast(lat: 42.3993, lon: 42.5491)
     }
     
     override func viewDidLayoutSubviews() {

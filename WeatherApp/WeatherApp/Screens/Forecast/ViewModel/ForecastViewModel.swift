@@ -53,16 +53,6 @@ class ForecastViewModel {
         }
     }
     
-//    func loadForecast(
-//        lat: Double = 42.3993,
-//        lon: Double = 42.5491
-//    ) {
-//        service.loadWeatherForcast(lat: lat, lon: lon) { [weak self] weatherResponse in
-//            guard let self else { return }
-//            self.processResponse(weatherResponse)
-//        }
-//    }
-    
     func updateForecast(for cityName: String) {
         service.loadWeatherForCity(cityName) { [weak self] response in
             guard let self = self, let response = response else {
