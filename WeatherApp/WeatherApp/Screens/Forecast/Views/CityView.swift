@@ -32,7 +32,7 @@ class CityView: UIView {
         return imageView
     }()
     
-    // MARK: Init
+    // MARK: Initialization
     
     init() {
         super.init(frame: .zero)
@@ -43,7 +43,7 @@ class CityView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: Setup
+    // MARK: Methods
     
     private func setupView() {
         backgroundColor = .clear
@@ -66,8 +66,6 @@ class CityView: UIView {
             weatherImage.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16)
         ])
     }
-    
-    // MARK: Configuration
     
     func configure(city: String, weatherIcon: UIImage?) {
         let parts = city.split(separator: ",")

@@ -10,10 +10,10 @@ import Foundation
 
 class ForecastCell: UITableViewCell {
     
+    // MARK: Properties
+    
     static let identifier = "ForecastCell"
-    
-    // MARK:  UI Elements
-    
+        
     private let containerView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 16
@@ -23,13 +23,11 @@ class ForecastCell: UITableViewCell {
         return view
     }()
     
-    private let dateLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = .white
-        label.font = UIFont.systemFont(ofSize: 18, weight: .regular)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
+    private let dateLabel: UILabel = .make(
+        fontSize: 18,
+        weight: .regular,
+        color: .white
+    )
     
     private let weatherIcon: UIImageView = {
         let view = UIImageView()
@@ -39,14 +37,12 @@ class ForecastCell: UITableViewCell {
         return view
     }()
     
-    private let tempLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = .white
-        label.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
-        label.textAlignment = .right
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
+    private let tempLabel: UILabel = .make(
+        fontSize: 18,
+        weight: .semibold,
+        color: .white,
+        alignment: .right
+    )
     
     // MARK: Initialization
     
@@ -62,7 +58,7 @@ class ForecastCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: Setup Logic
+    // MARK: Methods
     
     private func setupInitialStyles() {
         self.backgroundColor = .clear
@@ -104,8 +100,6 @@ class ForecastCell: UITableViewCell {
             tempLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -padding),
         ])
     }
-    
-    // MARK: Configuration
     
     func configure(dateText: String, imageUrl: String, temperatureText: String) {
         dateLabel.text = dateText

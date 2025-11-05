@@ -29,7 +29,6 @@ class ForecastViewModel {
     var onUpdate: (() -> Void)?
     var onError: ((String) -> Void)?
     
-    
     private let service = WeatherService()
     private let inputFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
@@ -152,5 +151,3 @@ class ForecastViewModel {
         return items[index]
     }
 }
-
-

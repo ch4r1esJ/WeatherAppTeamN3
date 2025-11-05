@@ -9,9 +9,10 @@ import UIKit
 
 class ForecastViewController: UIViewController {
     
-    // MARK: UI
+    // MARK: Properties
     
     private let cityView = CityView()
+    private let viewModel = ForecastViewModel()
     
     private let weatherImageView: UIImageView = {
         let imageView = UIImageView()
@@ -45,10 +46,6 @@ class ForecastViewController: UIViewController {
         )
         return tableView
     }()
-    
-    // MARK: ViewModel
-    
-    private let viewModel = ForecastViewModel()
     
     // MARK: Life Cycle
     
@@ -137,8 +134,6 @@ class ForecastViewController: UIViewController {
     }
 }
 
-// MARK: UITableViewDataSource / UITableViewDelegate
-
 extension ForecastViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView,
                    numberOfRowsInSection section: Int) -> Int {
@@ -171,4 +166,3 @@ extension ForecastViewController: UITableViewDataSource, UITableViewDelegate {
         return 80
     }
 }
-

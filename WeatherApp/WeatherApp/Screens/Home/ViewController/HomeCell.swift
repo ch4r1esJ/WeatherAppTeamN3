@@ -21,14 +21,12 @@ class HomeCell: UICollectionViewCell {
         return view
     }()
     
-    private let timeLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .systemFont(ofSize: 15, weight: .medium)
-        label.textColor = .white.withAlphaComponent(0.9)
-        label.textAlignment = .center
-        return label
-    }()
+    private let timeLabel: UILabel = .make(
+        fontSize: 15,
+        weight: .medium,
+        color: .white.withAlphaComponent(0.9),
+        alignment: .center
+    )
     
     private let weatherIcon: UIImageView = {
         let imageView = UIImageView()
@@ -38,14 +36,12 @@ class HomeCell: UICollectionViewCell {
         return imageView
     }()
     
-    private let temperatureLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .systemFont(ofSize: 20, weight: .semibold)
-        label.textColor = .white
-        label.textAlignment = .center
-        return label
-    }()
+    private let temperatureLabel: UILabel = .make(
+        fontSize: 20,
+        weight: .semibold,
+        color: .white,
+        alignment: .center
+    )
     
     // MARK: - Init
     

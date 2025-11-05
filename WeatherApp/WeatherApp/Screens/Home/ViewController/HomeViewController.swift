@@ -22,14 +22,12 @@ class HomeViewController: UIViewController {
         return view
     }()
     
-    private let todayLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "TODAY"
-        label.font = .systemFont(ofSize: 13, weight: .semibold)
-        label.textColor = .white.withAlphaComponent(0.7)
-        return label
-    }()
+    private let todayLabel: UILabel = .make(
+        text: "TODAY",
+        fontSize: 13,
+        weight: .semibold,
+        color: .white.withAlphaComponent(0.7)
+    )
     
     private let detailsButton: UIButton = {
         let button = UIButton(type: .system)
@@ -173,7 +171,6 @@ class HomeViewController: UIViewController {
         infoView.configure(temperature: homeViewModel.temperature, max: homeViewModel.max, min: homeViewModel.min)
         self.backgroundImage.image = homeViewModel.backgroundImage()
     }
-    
 }
 
 extension HomeViewController: UICollectionViewDataSource {
@@ -199,4 +196,3 @@ extension HomeViewController: UICollectionViewDelegate {
         homeViewModel.loadWeather(lat: lat, lon: lon)
     }
 }
-
